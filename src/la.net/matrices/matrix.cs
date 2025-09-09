@@ -1,18 +1,18 @@
+using System.Numerics;
+
 namespace Matrices;
-public sealed class Matrix {
+public sealed class Matrix<T> where T : INumber<T> {
     public int Cols { get; }
     public int Rows { get; }
-    private readonly double[,] _data;
-    public Matrix (int rows, int cols, double[,] data) {
-        // check if rows and cols are valid
+    private readonly T[,] _data;
+    public Matrix(int rows, int cols, T[,]? data = null) {
         if(rows <= 0) { 
-            throw new ArgumentOutOfRangeException(nameof(rows), $"{nameof(rows)} must be greater than 0.") 
+            throw new ArgumentOutOfRangeException(nameof(rows), $"{nameof(rows)} must be greater than 0.");
         } else if(cols <= 0) { 
             throw new ArgumentOutOfRangeException(nameof(cols), $"{nameof(cols)} must be greater than 0."); 
         }
         if(data == null) {
-            // create empty matrix on init if no data is provided
-            _data = new double[rows, cols]; 
+            _data = new T[rows, cols]; 
         } else {
             // if data provided: check if rows and cols match actual data
             if(data.GetLength(0) != rows) {
@@ -22,13 +22,13 @@ public sealed class Matrix {
             } else {
                 this.Cols = cols;
                 this.Rows = rows;
-                // create a clone of the param so if the ref is changed our obj has a private instance (typecasted because .Clone() returns an object)
-                _data = (double[,])data.Clone();
+                // create a clone of the param so if the ref is changed our obj has a private instance
+                _data = (T[,])data.Clone();
             }
         }
     }
 
-    public double Get(int row, int col) {
+    public T Get(int row, int col) {
         return _data[row, col];
     }
 }
