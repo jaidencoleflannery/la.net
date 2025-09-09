@@ -31,4 +31,8 @@ public sealed class Matrix<T> where T : INumber<T> {
     public T Get(int row, int col) {
         return _data[row, col];
     }
+
+    public (int Rows, int Cols) GetSize() {
+        return ( Rows: _data.GetLength(0), Cols: _data.GetLength(1) ) ;
+    }
 }
