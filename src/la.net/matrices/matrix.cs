@@ -32,19 +32,30 @@ public sealed class Matrix<T> where T : INumber<T> {
         return _data[row, col];
     }
 
+    public T[,] GetRow(int row) {
+        T[,] output = new T[0, 1]; 
+        for(int col = 0; col < Cols; col++) {
+            output[0, col] = _data[row, col];
+        }
+        return output;
+    }
+
     public void Set(int row, int col, T value) {
         _data[row, col] = value;
     }
 
-    public void SetRow(int row, T[] value) {
+    public void SetRow(int row, T[,] value) {
         for(int col = 0; col < value.Length; col++) {
             _data[row, col] = value[col];
         }
     }
 
     public void PushRow(T[] value) {
-        // NEED TO ACTUALLY IMPLEMENT THIS - MIGHT NEED TO SWITCH TO JAGGED ARRAYS TO PRESERVE MEMORY SPACE [][]
-        int row = 0;
+        Matrix<T> matrix = new(Rows + 1, Cols);
+        for(int row = 0; row < Rows; row++) {
+            for(int col = 0; col < Rows; col++) {
+                matrix.SetRow(row, this.GetRow(row));
+        }
         for(int col = 0; col < value.Length; col++) {
             _data[row, col] = value[col];
         }

@@ -48,7 +48,7 @@ static class MatrixOperations {
         Matrix<T> sortedMatrix = new(0, 0);
         Matrix<T> prependMatrix = new(0, 0);
         int? index = 0;
-        int? numZeroes = null;
+        int? numZeroes = 0;
 
         //GO THROUGH LIST, IF IT STARTS WITH 0 ADD IT TO A NEW LIST, THEN IF THE NEXT ROW HAS MORE LEADING ZEROES ADD IT ABOVE ON THE NEW LIST, IF LESS THAN ADD IT BELOW LAST ENTRY. ONCE DONE PUSH ALL NON-ZERO LEADERS TO THE TOP
 
