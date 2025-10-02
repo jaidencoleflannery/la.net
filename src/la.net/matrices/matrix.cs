@@ -2,9 +2,9 @@ using System.Numerics;
 
 namespace Matrices;
 public sealed class Matrix<T> where T : INumber<T> {
-    public int Cols { get; }
-    public int Rows { get; }
-    private readonly T[,] _data;
+    public int Cols { get; set; }
+    public int Rows { get; set; }
+    private T[,] _data;
     public Matrix(int rows, int cols, T[,]? data = null) {
         if(rows <= 0) { 
             throw new ArgumentOutOfRangeException(nameof(rows), $"{nameof(rows)} must be greater than 0.");
@@ -32,10 +32,10 @@ public sealed class Matrix<T> where T : INumber<T> {
         return _data[row, col];
     }
 
-    public T[,] GetRow(int row) {
-        T[,] output = new T[0, 1]; 
+    public T[] GetRow(int row) {
+        T[] output = new T[Cols]; 
         for(int col = 0; col < Cols; col++) {
-            output[0, col] = _data[row, col];
+            output[col] = _data[row, col];
         }
         return output;
     }
@@ -44,21 +44,27 @@ public sealed class Matrix<T> where T : INumber<T> {
         _data[row, col] = value;
     }
 
-    public void SetRow(int row, T[,] value) {
+    public void SetRow(int row, T[] value) {
         for(int col = 0; col < value.Length; col++) {
             _data[row, col] = value[col];
         }
     }
 
     public void PushRow(T[] value) {
-        Matrix<T> matrix = new(Rows + 1, Cols);
+        if(value.Length != Cols) {
+            throw new ArgumentOutOfRangeException(nameof(Rows), $"{nameof(Rows)} must match existing matrix's length."); 
+        }
+        T[,] matrix = new T[Rows + 1, Cols];
+        for(int col = 0; col < Cols; col++) {
+            matrix[0, col] = value[col];
+        }
         for(int row = 0; row < Rows; row++) {
-            for(int col = 0; col < Rows; col++) {
-                matrix.SetRow(row, this.GetRow(row));
+            for(int col = 0; col < Cols; col++) {
+                matrix[row + 1, col] = _data[row, col];
+            }
         }
-        for(int col = 0; col < value.Length; col++) {
-            _data[row, col] = value[col];
-        }
+        Rows += 1;
+        _data = matrix;
     }
 
     public void AppendRow(T[] value) {
