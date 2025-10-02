@@ -45,19 +45,26 @@ static class MatrixOperations {
         }
 
     private static void SortRows<T>(this Matrix<T> instance) where T : INumber<T> {
+        Matrix<T> sortedMatrix = new(0, 0);
+        Matrix<T> prependMatrix = new(0, 0);
+        int? index = 0;
+        int? numZeroes = null;
+
+        //GO THROUGH LIST, IF IT STARTS WITH 0 ADD IT TO A NEW LIST, THEN IF THE NEXT ROW HAS MORE LEADING ZEROES ADD IT ABOVE ON THE NEW LIST, IF LESS THAN ADD IT BELOW LAST ENTRY. ONCE DONE PUSH ALL NON-ZERO LEADERS TO THE TOP
+
         for(int row = 0; row < instance.Rows; row++) {
             for(int col = 0; col < instance.Cols; col++) {
-                if(row < instance.Rows - 1) {
-                    if(!(instance.Get(row, col) == T.Zero) && instance.Get(row + 1, col) == T.Zero && (row < instance.Rows)) {
-                        Console.WriteLine($"NOT swapping rows {row}{row + 1}");
-                        break;
-                    } else if (instance.Get(row, col) == T.Zero && !(instance.Get(row + 1, col) == T.Zero)){
-                        Console.WriteLine($"Swapping rows {row}{row + 1}");
-                        SwapRows(instance, row, row + 1); 
-                        row--;
-                        col = 0;
+                if(instance.Get(row, col) == T.Zero) {
+                    numZeroes++;
+                    Console.WriteLine($"curr: {instance.Get(row, col)}, next: {instance.Get(row + 1, col)}");
+                    if(instance.Get(row + 1, col) != T.Zero) {
+                        Console.WriteLine($"Swapping {row}{row + 1}");
+                        instance.SwapRows(row, row + 1);
+                        row = 0; col = 0;
                         break;
                     }
+                } else {
+                    break;
                 }
             }
         }

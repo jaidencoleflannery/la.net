@@ -36,6 +36,27 @@ public sealed class Matrix<T> where T : INumber<T> {
         _data[row, col] = value;
     }
 
+    public void SetRow(int row, T[] value) {
+        for(int col = 0; col < value.Length; col++) {
+            _data[row, col] = value[col];
+        }
+    }
+
+    public void PushRow(T[] value) {
+        // NEED TO ACTUALLY IMPLEMENT THIS - MIGHT NEED TO SWITCH TO JAGGED ARRAYS TO PRESERVE MEMORY SPACE [][]
+        int row = 0;
+        for(int col = 0; col < value.Length; col++) {
+            _data[row, col] = value[col];
+        }
+    }
+
+    public void AppendRow(T[] value) {
+        int row = Rows + 1;
+        for(int col = 0; col < value.Length; col++) {
+            _data[row, col] = value[col];
+        }
+    }
+
     public (int Rows, int Cols) GetSize() {
         return ( Rows: _data.GetLength(0), Cols: _data.GetLength(1) ) ;
     }
