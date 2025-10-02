@@ -16,7 +16,7 @@ public sealed class Matrix<T> where T : INumber<T> {
         } else {
             // if data provided: check if rows and cols match actual data
             if(data.GetLength(0) != rows) {
-                throw new ArgumentException(nameof(rows), $"{nameof(rows)} must be equal to the number of columns in the array.");
+                throw new ArgumentException(nameof(rows), $"{nameof(rows)} must be equal to the number of rows in the array.");
             } else if (data.GetLength(1) != cols) {
                 throw new ArgumentException(nameof(cols), $"{nameof(cols)} must be equal to the number of columns in the array.");
             } else {
@@ -32,7 +32,21 @@ public sealed class Matrix<T> where T : INumber<T> {
         return _data[row, col];
     }
 
+    public void Set(int row, int col, T value) {
+        _data[row, col] = value;
+    }
+
     public (int Rows, int Cols) GetSize() {
         return ( Rows: _data.GetLength(0), Cols: _data.GetLength(1) ) ;
+    }
+
+    public string Print() {
+        string output = "";
+        for(int row = 0; row < Rows; row++) {
+            output += "| ";
+            for(int col = 0; col < Cols; col++) { output += $"{_data[row, col]} "; }
+            output += "|\n";
+        }
+        return output;
     }
 }
