@@ -34,7 +34,6 @@ public sealed class Matrix<T> where T : INumber<T> {
                 max = rows;
             }
             // this turns our zero matrix into an identity matrix
-            Console.WriteLine(max);
             for(int cursor = 0; cursor < max; cursor++) { 
                 _data[cursor, cursor] = T.One;
             }
