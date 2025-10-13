@@ -70,10 +70,10 @@ public sealed class Matrix<T> where T : INumber<T> {
         return _data[row, col];
     }
 
-    public T[] GetRow(int row) {
-        T[] output = new T[Cols]; 
+    public T[,] GetRow(int row) {
+        T[,] output = new T[1, Cols]; 
         for(int col = 0; col < Cols; col++) {
-            output[col] = _data[row, col];
+            output[0, col] = _data[row, col];
         }
         return output;
     }
