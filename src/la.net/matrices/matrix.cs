@@ -177,27 +177,30 @@ public sealed class Matrix<T> where T : INumber<T>
         _data = matrix;
     }
 
-    public void AppendRow(T[] value, Boolean conform)
+    public void AppendRow(T[] value, bool conform)
     {
         if(Cols < value.Length) {
             if(conform) {
-                throw new ArgumentOutOfRangeException(nameof(value), "Added row must be less than or equal to column length of existing matrix.");
+                throw new ArgumentOutOfRangeException(nameof(value), "Added row must be less than or equal to row length of existing matrix.");
             } else {
-                throw new ArgumentOutOfRangeException(nameof(value), "Added row must be equal to column length of existing matrix.");
+                throw new ArgumentOutOfRangeException(nameof(value), "Added row must be equal to row length of existing matrix.");
             }
         }
-        T[,] matrix = new T[Rows, Cols + 1];
+        T[,] matrix = new T[Rows + 1, Cols];
+        for(int row = 0; row < Rows; row++) {
+            Array.Copy(value, 0, matrix, 0, matrix.Length);
+        }
+        Rows++;
         for(int col = 0; col < value.Length; col++) {
             matrix[Rows, col] = value[col];
         }
         if(conform) {
             // convert n*n index to identity form
-            if(value.Length < Rows) {
+            if(value.Length < Rows && Rows < Cols) {
                 matrix[Rows, Rows] = T.One;
             }
         }
         _data = matrix;
-        this.Cols++;
     }
 
     public (int Rows, int Cols) GetSize()
