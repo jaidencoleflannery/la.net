@@ -175,7 +175,6 @@ public sealed class Matrix<T> where T : INumber<T>
         _data = matrix;
     }
 
-    // this is not working currently
     public void AppendRow(T[] values, bool conform = false)
     {
         if(Cols < values.Length) {
@@ -186,18 +185,27 @@ public sealed class Matrix<T> where T : INumber<T>
             }
         }
         T[,] matrix = new T[Rows + 1, Cols];
+        // Copy existing rows
         for(int row = 0; row < Rows; row++) {
-            Array.Copy(_data, 0, matrix, 0, _data.Length);
+            for(int col = 0; col < Cols; col++) {
+                matrix[row, col] = this._data[row, col];
+            }
         }  
-        for(int col = 0; col < values.Length; col++) {
-            matrix[Rows, col] = values[col];
+        // Set new row values
+        for(int col = 0; col < Cols; col++) {
+            if(col < values.Length) {
+                matrix[Rows, col] = values[col];
+            } else {
+                matrix[Rows, col] = T.Zero;
+            }
         }
         if(conform) {
             // convert n*n index to identity form
-            if(values.Length < Rows && Rows < Cols) {
-                matrix[Rows, Rows] = T.One;
+            if(values.Length < Cols) {
+                matrix[Rows, values.Length] = T.One;
             }
         }
+        Rows += 1;
         _data = matrix;
     }
 
