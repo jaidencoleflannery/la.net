@@ -29,8 +29,7 @@ public sealed class Matrix<T> where T : INumber<T>
             Console.WriteLine(data.GetLength(1));
             throw new ArgumentOutOfRangeException(nameof(cols), $"{nameof(cols)} must be greater than or equal to provided data.");
         }
-
-        Console.WriteLine($"{cols}, {rows}");
+        
         this.Cols = cols;
         this.Rows = rows;
 
@@ -177,26 +176,25 @@ public sealed class Matrix<T> where T : INumber<T>
         _data = matrix;
     }
 
-    public void AppendRow(T[] value, bool conform)
+    public void AppendRow(T[] values, bool conform)
     {
-        if(Cols < value.Length) {
+        if(Cols < values.Length) {
             if(conform) {
-                throw new ArgumentOutOfRangeException(nameof(value), "Added row must be less than or equal to row length of existing matrix.");
+                throw new ArgumentOutOfRangeException(nameof(values), "Added row must be less than or equal to row length of existing matrix.");
             } else {
-                throw new ArgumentOutOfRangeException(nameof(value), "Added row must be equal to row length of existing matrix.");
+                throw new ArgumentOutOfRangeException(nameof(values), "Added row must be equal to row length of existing matrix.");
             }
         }
         T[,] matrix = new T[Rows + 1, Cols];
         for(int row = 0; row < Rows; row++) {
-            Array.Copy(value, 0, matrix, 0, matrix.Length);
-        }
-        Rows++;
-        for(int col = 0; col < value.Length; col++) {
-            matrix[Rows, col] = value[col];
+            Array.Copy(_data, 0, matrix, 0, _data.Length);
+        }  
+        for(int col = 0; col < values.Length; col++) {
+            matrix[Rows, col] = values[col];
         }
         if(conform) {
             // convert n*n index to identity form
-            if(value.Length < Rows && Rows < Cols) {
+            if(values.Length < Rows && Rows < Cols) {
                 matrix[Rows, Rows] = T.One;
             }
         }
