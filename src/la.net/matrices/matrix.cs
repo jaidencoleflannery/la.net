@@ -21,12 +21,10 @@ public sealed class Matrix<T> where T : INumber<T>
 
         if (data != null && rows < data.GetLength(0))
         {
-            Console.WriteLine(data.GetLength(0));
             throw new ArgumentOutOfRangeException(nameof(rows), $"{nameof(rows)} must be greater than or equal to provided data.");
         }
         else if (data != null && cols < data.GetLength(1))
         {
-            Console.WriteLine(data.GetLength(1));
             throw new ArgumentOutOfRangeException(nameof(cols), $"{nameof(cols)} must be greater than or equal to provided data.");
         }
         
@@ -47,7 +45,7 @@ public sealed class Matrix<T> where T : INumber<T>
             {
                 max = rows;
             }
-            // this turns our zero matrix into an identity matrix
+            // this turns our remaining zero matrix entries into an identity matrix
             for (int cursor = 0; cursor < max; cursor++)
             {
                 _data[cursor, cursor] = T.One;
@@ -55,7 +53,7 @@ public sealed class Matrix<T> where T : INumber<T>
         }
         else
         {
-            // push smaller dimensional matrix into larger dimensional identity matrix
+            // if matrix is smaller than identity matrix, push smaller dimensional matrix into larger dimensional identity matrix
             if (data.GetLength(0) < rows || data.GetLength(1) < cols)
             {
                 for (int row = 0; row < data.GetLength(0); row++)
@@ -90,6 +88,7 @@ public sealed class Matrix<T> where T : INumber<T>
             }
             else
             {
+                // we clone so that we have our own matrix in memory
                 _data = (T[,])data.Clone();
             }
         }
@@ -119,7 +118,7 @@ public sealed class Matrix<T> where T : INumber<T>
         _data[row, col] = value;
     }
 
-    public void SetRow(int row, T[] value, Boolean conform)
+    public void SetRow(int row, T[] value, Boolean conform = false)
     {
         if(Cols < value.Length) {
             if(conform) {
@@ -136,7 +135,7 @@ public sealed class Matrix<T> where T : INumber<T>
             }
         }
         if(conform) {
-            // convert n*n index to identity form
+            // convert free n*n indices to identity form
             if(Cols > value.Length) {
                 if(row > value.Length) {
                     _data[row, row] = T.One;
@@ -145,7 +144,7 @@ public sealed class Matrix<T> where T : INumber<T>
         }
     }
 
-    public void PushRow(T[] value, Boolean conform)
+    public void PushRow(T[] value, Boolean conform = false)
     {
         if(Cols < value.Length) {
             if(conform) {
@@ -176,7 +175,8 @@ public sealed class Matrix<T> where T : INumber<T>
         _data = matrix;
     }
 
-    public void AppendRow(T[] values, bool conform)
+    // this is not working currently
+    public void AppendRow(T[] values, bool conform = false)
     {
         if(Cols < values.Length) {
             if(conform) {
@@ -203,7 +203,7 @@ public sealed class Matrix<T> where T : INumber<T>
 
     public (int Rows, int Cols) GetSize()
     {
-        return (Rows: _data.GetLength(0), Cols: _data.GetLength(1));
+        return (Rows: this.Rows, Cols: this.Cols);
     }
 
     public string Print()
