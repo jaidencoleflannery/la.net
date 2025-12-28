@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Reflection.Metadata;
 
 namespace Matrices;
-public sealed class Matrix<T> where T : INumber<T>
+public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 {
     public int Cols { get; set; }
     public int Rows { get; set; }
