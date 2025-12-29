@@ -9,11 +9,11 @@ static class MatrixOperations {
             SwapRows(instance, 0, pivot.row);
         }
         (int row, int col) swap = instance.FindPivot(1);
-        reduceRow(instance, swap, pivot);
+        ReduceRow(instance, swap, pivot);
         return instance;
     }
 
-    private static void SwapRows<T>(this Matrix<T> instance, int row1, int row2) where T : INumber<T> {
+    public static void SwapRows<T>(this Matrix<T> instance, int row1, int row2) where T : INumber<T> {
         var rowLength = instance.GetSize().Cols;
         for(int col = 0; col < rowLength; col++) {
             T temp = instance.Get(row1, col);
@@ -47,15 +47,18 @@ static class MatrixOperations {
                 pivotRow = cursor;
             }
         }
-        // numZeroes.Length will be the first index after leading zeroes (pivot)
+        // numZeroes.Length will be the first index after leading zeroes (pivot).
         return (pivotRow, numZeroes[pivotRow]);
     }
 
-    private static void reduceRow<T>(this Matrix<T> instance, (int row, int col) swap, (int row, int col) pivot) where T : INumber<T>{
-        T scalar = -instance.Get(swap.row, swap.col) / instance.Get(pivot.row, pivot.col);
-        for(int cursor = 0; cursor < instance.Rows; cursor++) {
-            T value = instance.Get(swap.row, swap.col) + scalar * instance.Get(pivot.row, cursor);
-            instance.Set(swap.row, swap.col, value);
+    // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
+    public static void ReduceRow<T>(this Matrix<T> instance, (int row, int col) target, (int row, int col) pivot) where T : INumber<T>{
+        T scalar = -(instance.Get(target.row, target.col) / instance.Get(pivot.row, pivot.col));
+	Console.WriteLine($"Scalar: {scalar}");
+        for(int cursor = 0; cursor < instance.Cols; cursor++) {
+            T value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
+	    Console.WriteLine($"Setting {target.row}, {cursor} to {value}, based on: {instance.Get(target.row, cursor)} + ({scalar} * {instance.Get(pivot.row, cursor)})");
+            instance.Set(target.row, cursor, value);
         }
     }
 }
