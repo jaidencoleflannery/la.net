@@ -53,11 +53,11 @@ static class MatrixOperations {
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
     public static void ReduceRow<T>(this Matrix<T> instance, (int row, int col) target, (int row, int col) pivot) where T : INumber<T>{
+	// scalar needs to be a value such that pivot * scalar + target = 0, 
+	// thus the negation of the target divided by the pivot value, multiplied by the pivot value provides the negation of the target's value. 
         T scalar = -(instance.Get(target.row, target.col) / instance.Get(pivot.row, pivot.col));
-	Console.WriteLine($"Scalar: {scalar}");
         for(int cursor = 0; cursor < instance.Cols; cursor++) {
             T value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
-	    Console.WriteLine($"Setting {target.row}, {cursor} to {value}, based on: {instance.Get(target.row, cursor)} + ({scalar} * {instance.Get(pivot.row, cursor)})");
             instance.Set(target.row, cursor, value);
         }
     }
