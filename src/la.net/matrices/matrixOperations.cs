@@ -2,15 +2,32 @@ using System.Numerics;
 
 namespace Matrices;
 static class MatrixOperations {
-    public static Matrix<T> RowReduce<T>(this Matrix<T> instance) where T : INumber<T> {
-        var (rows, cols) = instance.GetSize();
-        (int row, int col) pivot = instance.FindPivot(0);
-        if(pivot.row != 0) {
-            SwapRows(instance, 0, pivot.row);
-        }
-        (int row, int col) swap = instance.FindPivot(1);
-        ReduceRow(instance, swap, pivot);
-        return instance;
+    public static Matrix<T> ToRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
+	var (rows, cols) = instance.GetSize();
+
+	// find leading pivot, if it isnt row 0, swap row 0 and leading pivot's row.
+        (int Row, int Col) pivot1 = instance.FindPivot(0);
+        if(pivot1.Row != 0) SwapRows(instance, 0, pivot1.Row);
+	int index = 1; // 0 was our first pivot.
+
+	// look for pivots in the same index on each row and row reduce, then go to next pivot and repeat until you reach row echelon form.
+	while(true) {
+		// next leading pivot.
+		(int row, int col) pivot2 = instance.FindPivot(index);
+		if(pivot2 == null) break;
+
+		// if both pivots have the same column, row reduce.
+		if(pivot1.Col == pivot2.Col) ReduceRow(instance, pivot2, pivot1);
+		// if pivot1 comes before pivot2, recursively check if the next found pivot has a second pivot in the same index.
+		else {
+			pivot1 = pivot2;
+			index = pivot.Row;
+		}
+
+		if(index == rows) break;
+	}
+	Console.WriteLine(instance);
+	return instance;
     }
 
     public static void SwapRows<T>(this Matrix<T> instance, int row1, int row2) where T : INumber<T> {
