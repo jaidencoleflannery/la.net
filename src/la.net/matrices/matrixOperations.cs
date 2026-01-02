@@ -9,31 +9,24 @@ static class MatrixOperations {
 	    // 3. go to next pivot and repeat until you reach row echelon form.
 	
 	    var (rows, cols) = instance.GetSize(); // bounds.
-        Console.WriteLine($"bounds: {rows}, {cols}");
 	    List<int> indices = new(); // for "bucket" sorting.
 
 	    // sort the matrix
 	    for(int row = 0; row < rows; row++) {
-		    // indices is the column of each row's index (this is a key-value map so we can iterate backwards without recalling FindPivot()).
-		    if(indices.Count <= 0) {
-			    indices.Add((instance.FindPivot(row).col));
-                Console.WriteLine($"Inserting {indices[0]} into {row}");
-		    } else {
-                var pivot = instance.FindPivot(row);
-			    // insertion sort (sort of)
-			    int swapRow = row;
-			    for(int cursor = indices.Count; cursor > 0; cursor--) {
-				    if(pivot.col < indices[cursor - 1]) {
-					    swapRow = (cursor - 1);
-				    } else {
-                        Console.WriteLine($"Inserting {pivot.col} into {swapRow}");
-                        indices.Insert(swapRow, pivot.col);
-					    instance.SwapRows(swapRow, row);
-				    } 
-		        }
-		    }	
-	    }
-    }
+            // indices is the column of each row's index (this is a key-value map so we can iterate backwards without recalling FindPivot()).
+             indices.Add((instance.FindPivot(row).col));
+            // get the pivot index for the current row
+            var pivot = indices[row];
+		    // insertion sort (sort of) - check each index of {indices} until we find a value greater than pivot => place pivot after
+			for(int cursor = row; cursor > 0; cursor--) {
+				if(pivot < indices[cursor - 1]) {
+				    instance.SwapRows(cursor, (cursor - 1));
+                } else {
+                    break;
+                } 
+		    }
+		}	
+	}
 
     public static void SwapRows<T>(this Matrix<T> instance, int row1, int row2) where T : INumber<T> {
         var rowLength = instance.GetSize().Cols;
