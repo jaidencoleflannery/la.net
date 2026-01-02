@@ -2,30 +2,37 @@ using System.Numerics;
 
 namespace Matrices;
 static class MatrixOperations {
+
     public static void ToRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
-	var (rows, cols) = instance.GetSize();
+	    // 1. sort the matrix by leading pivot index,
+	    // 2. look for pivots in the same index as {pivot} and row reduce,
+	    // 3. go to next pivot and repeat until you reach row echelon form.
+	
+	    var (rows, cols) = instance.GetSize(); // bounds.
+        Console.WriteLine($"bounds: {rows}, {cols}");
+	    List<int> indices = new(); // for "bucket" sorting.
 
-	// find leading pivot, if it isnt row 0, swap row 0 and leading pivot's row.
-        (int row, int col) pivot1 = instance.FindPivot(0);
-	if(pivot1 == (-1, -1)) return; // no pivot found
-        if(pivot1.row != 0) SwapRows(instance, 0, pivot1.row);
-	int index = 1; // 0 was our first pivot.
-
-	// look for pivots in the same index on each row and row reduce, then go to next pivot and repeat until you reach row echelon form.
-	while(index < rows) {
-		// next leading pivot.
-		(int row, int col) pivot2 = instance.FindPivot(index);
-		if(pivot2 == (-1, -1)) return;
-
-		// if both pivots have the same column, row reduce.
-		if(pivot1.col == pivot2.col) ReduceRow(instance, pivot2, pivot1);
-		// if pivot1 comes before pivot2, recursively check if the next found pivot has a second pivot in the same index.
-		else {
-			pivot1 = pivot2;
-			index = pivot1.row;
-		}
-	}
-	return;
+	    // sort the matrix
+	    for(int row = 0; row < rows; row++) {
+		    // indices is the column of each row's index (this is a key-value map so we can iterate backwards without recalling FindPivot()).
+		    if(indices.Count <= 0) {
+			    indices.Add((instance.FindPivot(row).col));
+                Console.WriteLine($"Inserting {indices[0]} into {row}");
+		    } else {
+                var pivot = instance.FindPivot(row);
+			    // insertion sort (sort of)
+			    int swapRow = row;
+			    for(int cursor = indices.Count; cursor > 0; cursor--) {
+				    if(pivot.col < indices[cursor - 1]) {
+					    swapRow = (cursor - 1);
+				    } else {
+                        Console.WriteLine($"Inserting {pivot.col} into {swapRow}");
+                        indices.Insert(swapRow, pivot.col);
+					    instance.SwapRows(swapRow, row);
+				    } 
+		        }
+		    }	
+	    }
     }
 
     public static void SwapRows<T>(this Matrix<T> instance, int row1, int row2) where T : INumber<T> {
@@ -38,14 +45,14 @@ static class MatrixOperations {
     }
 
     public static (int row, int col) FindPivot<T>(this Matrix<T> instance, int row) where T : INumber<T> { 
-        uint cursor = 0;
-	int pivot = -1;
-	while(pivot == -1) {
-		int entry = instance.Get(row, cursor);
-		if(entry > 0) pivot = entry;
-		else cursor++;
+        int col = 0;
+	while(col < instance.Cols) {
+		if(instance.Get(row, col) != T.Zero) {
+			return(row, col);
+		}
+		else col++;
 	}
-	return (row, cursor);
+	return (row, -1);
     }
     
 
