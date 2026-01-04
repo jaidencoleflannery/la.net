@@ -30,18 +30,19 @@ static class MatrixOperations {
 		}
 
         // row reduce
-        for(int pivot = 0; pivot < rows; pivot++) {
-            for(int comp = (pivot + 1); comp < rows; comp++) {
-                if(indices[pivot] == indices[comp]) {
-                    instance.ReduceRow((comp, indices[comp]), (pivot, indices[pivot]));
+        for(int row = 0; row < (rows - 1); row++) { 
+            for(int comp = (row + 1); comp < rows; comp++) {
+                if(indices[row] == indices[comp]) {
+                    instance.ReduceRow((comp, indices[comp]), (row, indices[row]));
+                    indices[comp] = instance.FindPivot(comp).col;
                 }
             }
         }
+
+        for(int row = 0; row < rows; row++) {
+            ScaleRow(instance, (row, indices[row])); // this is technically the row and column of row's pivot.
+        }
 	}
-
-    public static void PivotSort<T>(this Matrix<T> instance) where T : INumber<T> {
-
-    }
 
     public static void SwapRows<T>(this Matrix<T> instance, int row1, int row2) where T : INumber<T> {
         var rowLength = instance.GetSize().Cols;
@@ -54,20 +55,27 @@ static class MatrixOperations {
 
     public static (int row, int col) FindPivot<T>(this Matrix<T> instance, int row) where T : INumber<T> { 
         int col = 0;
-	while(col < instance.Cols) {
-		if(instance.Get(row, col) != T.Zero) {
-			return(row, col);
-		}
-		else col++;
-	}
-	return (row, -1);
+	    while(col < instance.Cols) {
+		    if(instance.Get(row, col) != T.Zero) {
+			    return(row, col);
+		    } else col++;
+	    }
+	    return (row, -1);
     }
-    
+
+    public static void ScaleRow<T>(this Matrix<T> instance, (int row, int pivot) target) where T : INumber<T> {
+        // scalar needs to be a value such that pivot * scalar = 1.
+        T scalar = T.One / T.CreateChecked(instance.Get(target.row, target.pivot));
+        for(int cursor = target.pivot; cursor < instance.Cols; cursor++) {
+            T value = instance.Get(target.row, cursor) * scalar;
+            instance.Set(target.row, cursor, value);
+        }
+    }
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
     public static void ReduceRow<T>(this Matrix<T> instance, (int row, int col) target, (int row, int col) pivot) where T : INumber<T>{
-	// scalar needs to be a value such that pivot * scalar + target = 0, 
-	// thus the negation of the target divided by the pivot value, multiplied by the pivot value provides the negation of the target's value. 
+	    // scalar needs to be a value such that pivot * scalar + target = 0, 
+	    // thus the negation of the target divided by the pivot value, multiplied by the pivot value provides the negation of the target's value. 
         T scalar = -(instance.Get(target.row, target.col) / instance.Get(pivot.row, pivot.col));
         for(int cursor = 0; cursor < instance.Cols; cursor++) {
             T value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
