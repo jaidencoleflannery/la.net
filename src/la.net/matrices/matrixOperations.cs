@@ -17,16 +17,31 @@ static class MatrixOperations {
              indices.Add((instance.FindPivot(row).col));
             // get the pivot index for the current row
             var pivot = indices[row];
-		    // insertion sort (sort of) - check each index of {indices} until we find a value greater than pivot => place pivot after
+		    // insertion sort - check each index of {indices} until we find a value greater than pivot => place pivot after
 			for(int cursor = row; cursor > 0; cursor--) {
 				if(pivot < indices[cursor - 1]) {
+                    // keep our bucket accurate for later use
+                    (indices[cursor], indices[cursor - 1]) = (indices[cursor - 1], indices[cursor]);
 				    instance.SwapRows(cursor, (cursor - 1));
                 } else {
                     break;
                 } 
 		    }
-		}	
+		}
+
+        // row reduce
+        for(int pivot = 0; pivot < rows; pivot++) {
+            for(int comp = (pivot + 1); comp < rows; comp++) {
+                if(indices[pivot] == indices[comp]) {
+                    instance.ReduceRow((comp, indices[comp]), (pivot, indices[pivot]));
+                }
+            }
+        }
 	}
+
+    public static void PivotSort<T>(this Matrix<T> instance) where T : INumber<T> {
+
+    }
 
     public static void SwapRows<T>(this Matrix<T> instance, int row1, int row2) where T : INumber<T> {
         var rowLength = instance.GetSize().Cols;
