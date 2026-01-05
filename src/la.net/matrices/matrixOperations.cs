@@ -8,12 +8,13 @@ static class MatrixOperations {
         // 2. rid of upper triangular values so instance becomes an identity matrix.
         instance.ToRowEchelon();
 
-        for(int row = 0; row < instance.Rows; row++) {
-            int pivot = instance.FindPivot(row + 1);
+        for(int row = 0; row < (instance.Rows - 1); row++) {
+            (int row, int col) pivot = instance.FindPivot(row + 1);
             // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
-            (rowValue1, rowValue2) = (instance.Get(row, pivot), instance.Get((row + 1), pivot));
+            var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
             T scalar = -(rowValue1 / rowValue2);
-            for(int col = 0; col < instance.Columns; col++) {
+            // iterate through each value in second row and multiply by {scalar}, then add that value (which should be the negation of the first row's {col}).
+            for(int col = 0; col < instance.Cols; col++) {
                 instance.Set(row, col, ((scalar * rowValue2) + rowValue1));
             }
         }
