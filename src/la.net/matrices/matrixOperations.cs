@@ -3,6 +3,22 @@ using System.Numerics;
 namespace Matrices;
 static class MatrixOperations {
 
+    public static void ToReducedRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
+        // 1. reduce to row echelon,
+        // 2. rid of upper triangular values so instance becomes an identity matrix.
+        instance.ToRowEchelon();
+
+        for(int row = 0; row < instance.Rows; row++) {
+            int pivot = instance.FindPivot(row + 1);
+            // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
+            (rowValue1, rowValue2) = (instance.Get(row, pivot), instance.Get((row + 1), pivot));
+            T scalar = -(rowValue1 / rowValue2);
+            for(int col = 0; col < instance.Columns; col++) {
+                instance.Set(row, col, ((scalar * rowValue2) + rowValue1));
+            }
+        }
+    }
+
     public static void ToRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
 	    // 1. sort the matrix by leading pivot index,
 	    // 2. look for pivots in the same index as {pivot} and row reduce,

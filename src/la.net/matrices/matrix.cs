@@ -22,7 +22,7 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         _data = new T[rows, cols];
 
         // we are traversing the diagonal path of the matrix and need to know where the matrix ends, max is where the final pivot value will lay despite any free variables
-            int max = (rows >= cols) ? cols : rows;
+        int max = (rows >= cols) ? cols : rows;
 
         if (data == null) {
             // this turns our remaining zero matrix entries into an identity matrix
