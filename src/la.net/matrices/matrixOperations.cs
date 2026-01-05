@@ -10,6 +10,7 @@ static class MatrixOperations {
 
         for(int row = 0; row < (instance.Rows - 1); row++) {
             (int row, int col) pivot = instance.FindPivot(row + 1);
+            if(pivot.col < 0) continue;
             // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
             var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
             T scalar = -(rowValue1 / rowValue2);
@@ -47,18 +48,22 @@ static class MatrixOperations {
 		    }
 		}
 
+        for(int i = 0; i < indices.Count; i++) {
+            Console.WriteLine($": {indices[i]}");
+        }
+
         // row reduce
         for(int row = 0; row < (rows - 1); row++) { 
             for(int comp = (row + 1); comp < rows; comp++) {
                 if(indices[row] == indices[comp]) {
                     instance.ReduceRow((comp, indices[comp]), (row, indices[row]));
-                    indices[comp] = instance.FindPivot(comp).col;
+                    indices[comp] = instance.FindPivot(comp).col; // this returns -1 if you have a free variable.
                 }
             }
         }
 
         for(int row = 0; row < rows; row++) {
-            ScaleRow(instance, (row, indices[row])); // this is technically the row and column of row's pivot.
+            if(indices[row] > -1) ScaleRow(instance, (row, indices[row])); // this is technically the row and column of row's pivot.
         }
 	}
 

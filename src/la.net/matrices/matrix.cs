@@ -50,7 +50,8 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 
     public T Get(int row, int col)
     {
-        if(row < 0 || col < 0 || row > this.Rows || col > this.Cols) throw new ArgumentOutOfRangeException(nameof(row), "Index out of range.");
+        if(row < 0 || row > this.Rows) throw new ArgumentOutOfRangeException(nameof(row), "Index out of range.");
+        if(col < 0 || col > this.Cols) throw new ArgumentOutOfRangeException(nameof(col), "Index out of range.");
         return _data[row, col];
     }
 
