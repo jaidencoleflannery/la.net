@@ -13,8 +13,9 @@ static class MatrixOperations {
             // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
             var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
             T scalar = -(rowValue1 / rowValue2);
-            // iterate through each value in second row and multiply by {scalar}, then add that value (which should be the negation of the first row's {col}).
-            for(int col = 0; col < instance.Cols; col++) {
+            // iterate through each value in second row and multiply by {scalar}, then add that value (which should be the negation of the first row's {col}) -
+            // to the first row's {col}.
+            for(int col = pivot.col; col < instance.Cols; col++) {
                 instance.Set(row, col, ((scalar * rowValue2) + rowValue1));
             }
         }
