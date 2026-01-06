@@ -1,7 +1,7 @@
 using System.Numerics;
 
 namespace Matrices;
-static class MatrixOperations {
+public static class MatrixOperations {
 
     public static void ToReducedRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
         // 1. reduce to row echelon,
@@ -48,10 +48,6 @@ static class MatrixOperations {
 		    }
 		}
 
-        for(int i = 0; i < indices.Count; i++) {
-            Console.WriteLine($": {indices[i]}");
-        }
-
         // row reduce
         for(int row = 0; row < (rows - 1); row++) { 
             for(int comp = (row + 1); comp < rows; comp++) {
@@ -63,7 +59,7 @@ static class MatrixOperations {
         }
 
         for(int row = 0; row < rows; row++) {
-            if(indices[row] > -1) ScaleRow(instance, (row, indices[row])); // this is technically the row and column of row's pivot.
+            if(indices[row] > -1) instance.ScaleRow((row, indices[row])); // this is technically the row and column of row's pivot.
         }
 	}
 

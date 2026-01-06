@@ -6,8 +6,8 @@ using System.Text;
 namespace Matrices;
 public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 {
-    public int Cols { get; }
-    public int Rows { get; }
+    public int Cols { get; set; }
+    public int Rows { get; set; }
     private T[,] _data;
     public Matrix(int rows, int cols, T[,]? data = null)
     {
@@ -148,10 +148,11 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         var sb = new StringBuilder();
         for (int row = 0; row < Rows; row++)
         {
-            sb.AppendLine("| ");
+            sb.Append("| ");
             for (int col = 0; col < Cols; col++) sb.Append($"{_data[row, col]} ");
             sb.Append("|");
+            sb.AppendLine("");
         }
-        return output;
+        return sb.ToString();
     }
 }
