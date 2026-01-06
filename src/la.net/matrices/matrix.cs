@@ -1,12 +1,13 @@
 using System.Drawing;
 using System.Numerics;
 using System.Reflection.Metadata;
+using System.Text;
 
 namespace Matrices;
 public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 {
-    public int Cols { get; set; }
-    public int Rows { get; set; }
+    public int Cols { get; }
+    public int Rows { get; }
     private T[,] _data;
     public Matrix(int rows, int cols, T[,]? data = null)
     {
@@ -50,8 +51,8 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 
     public T Get(int row, int col)
     {
-        if(row < 0 || row > this.Rows) throw new ArgumentOutOfRangeException(nameof(row), "Index out of range.");
-        if(col < 0 || col > this.Cols) throw new ArgumentOutOfRangeException(nameof(col), "Index out of range.");
+        if(row < 0 || row >= this.Rows) throw new ArgumentOutOfRangeException(nameof(row), "Index out of range.");
+        if(col < 0 || col >= this.Cols) throw new ArgumentOutOfRangeException(nameof(col), "Index out of range.");
         return _data[row, col];
     }
 
@@ -70,32 +71,32 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         _data[row, col] = value;
     }
 
-    public void SetRow(int row, T[] value, bool conform = false)
+    public void SetRow(int row, T[] values, bool conform = false)
     {
-        if(Cols < value.Length) {
+        if(Cols < values.Length) {
             if(conform) throw new ArgumentOutOfRangeException(nameof(row), "Added row must be less than or equal to column length of existing matrix.");
             else throw new ArgumentOutOfRangeException(nameof(row), "Added row must be equal to column length of existing matrix.");
         }
         for (int col = 0; col < Cols; col++) {
-            if(col < value.Length) _data[row, col] = value[col]; 
+            if(col < values.Length) _data[row, col] = values[col]; 
             else _data[row, col] = T.Zero;
         }
         if(conform) {
             // convert free n*n indices to identity form
-            if(Cols > value.Length) {
-                if(row > value.Length) _data[row, row] = T.One;
+            if(Cols > values.Length) {
+                if(row > values.Length) _data[row, row] = T.One;
             }
         }
     }
 
-    public void PushRow(T[] value, bool conform = false)
+    public void PushRow(T[] values, bool conform = false)
     {
-        if(Cols < value.Length) {
-            if(conform) throw new ArgumentOutOfRangeException(nameof(value), "Added row must be less than or equal to column length of existing matrix.");
-            else throw new ArgumentOutOfRangeException(nameof(value), "Added row must be equal to column length of existing matrix.");
+        if(Cols < values.Length) {
+            if(conform) throw new ArgumentOutOfRangeException(nameof(values), "Added row must be less than or equal to column length of existing matrix.");
+            else throw new ArgumentOutOfRangeException(nameof(values), "Added row must be equal to column length of existing matrix.");
         }
         T[,] matrix = new T[Rows + 1, Cols];
-        for (int col = 0; col < value.Length; col++) matrix[0, col] = value[col];
+        for (int col = 0; col < values.Length; col++) matrix[0, col] = values[col];
         for (int row = 0; row < Rows; row++) {
             for (int col = 0; col < Cols; col++) {
                 matrix[row + 1, col] = _data[row, col];
@@ -103,7 +104,7 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         }
         if(conform) {
             // convert n*n index to identity form
-            if(value.Length == 0) {
+            if(values.Length == 0) {
                 matrix[0, 0] = T.One;
             }
         }
@@ -142,14 +143,14 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         return (Rows: this.Rows, Cols: this.Cols);
     }
 
-    public string Print()
+    public override string ToString()
     {
-        string output = "";
+        var sb = new StringBuilder();
         for (int row = 0; row < Rows; row++)
         {
-            output += "| ";
-            for (int col = 0; col < Cols; col++) output += $"{_data[row, col]} ";
-            output += "|\n";
+            sb.AppendLine("| ");
+            for (int col = 0; col < Cols; col++) sb.Append($"{_data[row, col]} ");
+            sb.Append("|");
         }
         return output;
     }
