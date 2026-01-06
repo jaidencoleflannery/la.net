@@ -6,8 +6,8 @@ using System.Text;
 namespace Matrices;
 public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 {
-    public int Cols { get; set; }
-    public int Rows { get; set; }
+    public int Cols { get; private set; }
+    public int Rows { get; private set; }
     private T[,] _data;
     public Matrix(int rows, int cols, T[,]? data = null)
     {
