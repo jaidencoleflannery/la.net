@@ -49,6 +49,19 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         }
     }
 
+    // NEED TO IMPLEMENT INDEXING IN ORDER FOR THIS TO WORK
+    public static Matrix<T> operator +(Matrix<T> a, Matrix<T> b) { 
+        if(a.Cols != b.Cols || a.Rows != b.Rows) return ArgumentException("Dimensions must match.");
+
+        T[,] c = new T[a.Rows, a.Cols];
+        for(int row = 0; row < a.Rows; row++) {
+            for(int col = 0; col < a.Cols; col++) {
+                c[row, col] = a[row, col] + b[row, col];
+            }
+        }
+        return c;
+    }
+
     public T Get(int row, int col)
     {
         if(row < 0 || row >= this.Rows) throw new ArgumentOutOfRangeException(nameof(row), "Index out of range.");
