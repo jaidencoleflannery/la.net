@@ -6,9 +6,17 @@ using System.Text;
 namespace Matrices;
 public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 {
+    // properties.
+    
     public int Cols { get; private set; }
     public int Rows { get; private set; }
+
+    // fields.
+
     private T[,] _data;
+
+    //constructors
+
     public Matrix(int rows, int cols, T[,]? data = null)
     {
         if (rows <= 0) throw new ArgumentOutOfRangeException(nameof(rows), $"{nameof(rows)} must be greater than 0.");
@@ -49,9 +57,15 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         }
     }
 
-    // NEED TO IMPLEMENT INDEXING IN ORDER FOR THIS TO WORK
+    // operator overloads.
+
+    public T this[int row, int col] {
+        get => _data[row, col];
+        set => _data[row, col] = value;
+    }
+
     public static Matrix<T> operator +(Matrix<T> a, Matrix<T> b) { 
-        if(a.Cols != b.Cols || a.Rows != b.Rows) return ArgumentException("Dimensions must match.");
+        if(a.Cols != b.Cols || a.Rows != b.Rows) throw new ArgumentException("Dimensions must match.");
 
         T[,] c = new T[a.Rows, a.Cols];
         for(int row = 0; row < a.Rows; row++) {
@@ -59,7 +73,23 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
                 c[row, col] = a[row, col] + b[row, col];
             }
         }
-        return c;
+        return new Matrix<T>(a.Rows, a.Cols, c);
+    }
+
+    public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b) { 
+        if(a.Cols != b.Rows) throw new ArgumentException("First matrix's num of columns must match second matrix's num of rows.");
+
+        T[,] c = new T[a.Rows, a.Cols];
+
+        for(int row = 0; row < a.Rows; row++) {
+            for(int aCol = 0; aCol < a.Cols; aCol++) {
+                for(int bCol = 0; bCol < b.Cols; bCol++) {
+                    c[row, aCol] += a[row, bCol] * b[bCol, row]; // col and row are swapped on purpose so we're multiplying each row of a by each column of b.
+                }
+            }
+        }
+        
+        return new Matrix<T>(a.Rows, a.Cols, c);
     }
 
     public T Get(int row, int col)
