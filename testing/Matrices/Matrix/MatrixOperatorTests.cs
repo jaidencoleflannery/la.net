@@ -2,6 +2,10 @@ namespace Matrices.Tests;
 
 public class MatrixOperatorTests
 {
+    // comparisons
+
+    // ==
+    
     [Fact]
     public void ComparisonOperator_DataMatches_Success() {
         var data =  new double[,] {
@@ -27,8 +31,7 @@ public class MatrixOperatorTests
 
         Matrix<double> m = new Matrix<double>(10, 10, data);
 
-        bool response = (m == m);
-        Assert.True(response);
+        Assert.True((m == m));
     }
 
     [Fact]
@@ -127,4 +130,143 @@ public class MatrixOperatorTests
 
         Assert.True(m1.GetHashCode() == m2.GetHashCode());
     }
+
+    // arithmetic
+    
+    // +
+    
+    [Fact]
+    public void AdditionOperator_AddingTwoMatrices_Success() {
+        var data = new double[,] {
+                {0, 4, 8}, 
+                {0, 3, 8},
+                {0, 1, 8},
+            };
+
+        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+
+        data = new double[,] {
+            {0, 4, 8}, 
+            {0, 3, 8},
+            {0, 1, 8},
+        };
+
+        Matrix<double> m2 = new Matrix<double>(3, 3, data);
+
+        data = new double[,] {
+            {0, 8, 16},
+            {0, 6, 16},
+            {0, 2, 16},
+        };
+
+        Matrix<double> result = new Matrix<double>(3, 3, data);
+
+        Assert.True((m1 + m2) == result);
+    }
+
+    [Fact]
+    public void AdditionOperator_AddingTwoMatricesOfDifferingSize_Fail() {
+        var data = new double[,] {
+                {0, 4, 8}, 
+                {0, 3, 8},
+                {0, 1, 8},
+            };
+
+        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+
+        data = new double[,] {
+            {0, 4, 8}, 
+            {0, 3, 8},
+            {0, 1, 8},
+            {0, 3, 8},
+        };
+
+        Matrix<double> m2 = new Matrix<double>(4, 3, data);
+
+        Assert.Throws<ArgumentException>(() => m1 + m2);
+    }
+
+    [Fact]
+    public void AdditionOperator_AddingNull_Fail() {
+        var data = new double[,] {
+                {0, 4, 8}, 
+                {0, 3, 8},
+                {0, 1, 8},
+            };
+
+        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+
+        Matrix<double> m2 = null;
+
+        Assert.Throws<ArgumentNullException>(() => m1 + m2);
+    }
+
+    // -
+
+    [Fact]
+    public void SubtractionOperator_SubtractingTwoMatrices_Success() {
+        var data = new double[,] {
+                {0, 4, 8}, 
+                {0, 3, 8},
+                {0, 1, 8},
+            };
+
+        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+
+        data = new double[,] {
+            {0, 4, 9}, 
+            {0, 2, 8},
+            {1, 1, 8},
+        };
+
+        Matrix<double> m2 = new Matrix<double>(3, 3, data);
+
+        data = new double[,] {
+            {0, 0, -1},
+            {0, 1, 0},
+            {-1, 0, 0},
+        };
+
+        Matrix<double> result = new Matrix<double>(3, 3, data);
+
+        Assert.True((m1 - m2) == result);
+    }
+
+    [Fact]
+    public void SubtractionOperator_SubtractingTwoMatricesOfDifferingSize_Fail() {
+        var data = new double[,] {
+                {0, 4, 8}, 
+                {0, 3, 8},
+                {0, 1, 8},
+            };
+
+        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+
+        data = new double[,] {
+            {0, 4, 8}, 
+            {0, 3, 8},
+            {0, 1, 8},
+            {0, 3, 8},
+        };
+
+        Matrix<double> m2 = new Matrix<double>(4, 3, data);
+
+        Assert.Throws<ArgumentException>(() => m1 - m2);
+    }
+
+    [Fact]
+    public void SubtractionOperator_AddingNull_Fail() {
+        var data = new double[,] {
+                {0, 4, 8}, 
+                {0, 3, 8},
+                {0, 1, 8},
+            };
+
+        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+
+        Matrix<double> m2 = null;
+
+        Assert.Throws<ArgumentNullException>(() => m1 - m2);
+    }
+
 }

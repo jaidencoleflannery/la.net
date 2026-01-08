@@ -1,6 +1,4 @@
-using System.Drawing;
 using System.Numerics;
-using System.Reflection.Metadata;
 using System.Text;
 
 namespace Matrices;
@@ -64,7 +62,8 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         set => _data[row, col] = value;
     }
 
-    public static Matrix<T> operator +(Matrix<T> a, Matrix<T> b) { 
+    public static Matrix<T> operator +(Matrix<T> a, Matrix<T> b) {
+        if (a is null || b is null) throw new ArgumentNullException();
         if(a.Cols != b.Cols || a.Rows != b.Rows) throw new ArgumentException("Dimensions must match.");
 
         T[,] c = new T[a.Rows, a.Cols];
@@ -76,7 +75,8 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         return new Matrix<T>(a.Rows, a.Cols, c);
     }
 
-    public static Matrix<T> operator -(Matrix<T> a, Matrix<T> b) { 
+    public static Matrix<T> operator -(Matrix<T> a, Matrix<T> b) {
+        if (a is null || b is null) throw new ArgumentNullException();
         if(a.Cols != b.Cols || a.Rows != b.Rows) throw new ArgumentException("Dimensions must match.");
 
         T[,] c = new T[a.Rows, a.Cols];
@@ -88,7 +88,8 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         return new Matrix<T>(a.Rows, a.Cols, c);
     } 
 
-    public static bool operator ==(Matrix<T> a, Matrix<T> b) { 
+    public static bool operator ==(Matrix<T> a, Matrix<T> b) {
+        if (a is null || b is null) throw new ArgumentNullException();
         if(a.Cols != b.Cols || a.Rows != b.Rows) return false;
 
         for(int row = 0; row < a.Rows; row++) {
@@ -100,6 +101,7 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
     }
 
     public static bool operator !=(Matrix<T> a, Matrix<T> b) {
+        if (a is null || b is null) throw new ArgumentNullException();
         if(a.Cols != b.Cols || a.Rows != b.Rows) return true;
 
         for(int row = 0; row < a.Rows; row++) {
@@ -127,7 +129,7 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
     public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b) { 
         if(a.Cols != b.Rows) throw new ArgumentException("First matrix's num of columns must match second matrix's num of rows.");
 
-        T[,] c = new T[a.Rows, a.Cols];
+        T[,] c = new T[a.Rows, b.Cols];
 
         for(int leftRow = 0; leftRow < a.Rows; leftRow++) { 
             for(int rightCol = 0; rightCol < b.Cols; rightCol++) {
@@ -160,7 +162,7 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 
     public void Set(int row, int col, T value)
     {
-        if(row < 0 || col < 0 || row > this.Rows || col > this.Cols) throw new ArgumentOutOfRangeException(nameof(row), "Index out of range.");
+        if(row < 0 || col < 0 || row >= this.Rows || col >= this.Cols) throw new ArgumentOutOfRangeException(nameof(row), "Index out of range.");
         _data[row, col] = value;
     }
 
