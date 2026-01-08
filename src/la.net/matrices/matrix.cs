@@ -76,6 +76,54 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
         return new Matrix<T>(a.Rows, a.Cols, c);
     }
 
+    public static Matrix<T> operator -(Matrix<T> a, Matrix<T> b) { 
+        if(a.Cols != b.Cols || a.Rows != b.Rows) throw new ArgumentException("Dimensions must match.");
+
+        T[,] c = new T[a.Rows, a.Cols];
+        for(int row = 0; row < a.Rows; row++) {
+            for(int col = 0; col < a.Cols; col++) {
+                c[row, col] = a[row, col] - b[row, col];
+            }
+        }
+        return new Matrix<T>(a.Rows, a.Cols, c);
+    } 
+
+    public static bool operator ==(Matrix<T> a, Matrix<T> b) { 
+        if(a.Cols != b.Cols || a.Rows != b.Rows) return false;
+
+        for(int row = 0; row < a.Rows; row++) {
+            for(int col = 0; col < a.Cols; col++) {
+                if(a[row, col] != b[row, col]) return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool operator !=(Matrix<T> a, Matrix<T> b) {
+        if(a.Cols != b.Cols || a.Rows != b.Rows) return true;
+
+        for(int row = 0; row < a.Rows; row++) {
+            for(int col = 0; col < a.Cols; col++) {
+                if(a[row, col] != b[row, col]) return true;
+            }
+        }
+        return false;
+    }
+
+    public override bool Equals(object? obj) => obj is Matrix<T> other && this == other;
+
+    public override int GetHashCode() {
+        var hash = new HashCode();
+        hash.Add(this.Rows);
+        hash.Add(this.Cols);
+        for(int row = 0; row < Rows; row++) {
+            for(int col = 0; col < Cols; col++) {
+                hash.Add(_data[row, col]);
+            }
+        }
+        return hash.ToHashCode();
+    }
+
     public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b) { 
         if(a.Cols != b.Rows) throw new ArgumentException("First matrix's num of columns must match second matrix's num of rows.");
 
