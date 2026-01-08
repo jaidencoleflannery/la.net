@@ -15,7 +15,7 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 
     private T[,] _data;
 
-    //constructors
+    // constructors.
 
     public Matrix(int rows, int cols, T[,]? data = null)
     {
@@ -81,14 +81,16 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
 
         T[,] c = new T[a.Rows, a.Cols];
 
-        for(int row = 0; row < a.Rows; row++) {
-            for(int aCol = 0; aCol < a.Cols; aCol++) {
-                for(int bCol = 0; bCol < b.Cols; bCol++) {
-                    c[row, aCol] += a[row, bCol] * b[bCol, row]; // col and row are swapped on purpose so we're multiplying each row of a by each column of b.
+        for(int leftRow = 0; leftRow < a.Rows; leftRow++) { 
+            for(int rightCol = 0; rightCol < b.Cols; rightCol++) {
+                T value = T.Zero;
+                for(int cursor = 0; cursor < a.Cols; cursor++) {
+                    value += a[leftRow, cursor] * b[cursor, rightCol];
                 }
-            }
+                c[leftRow, rightCol] = value;
+            } 
         }
-        
+
         return new Matrix<T>(a.Rows, a.Cols, c);
     }
 
