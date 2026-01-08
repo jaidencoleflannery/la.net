@@ -127,6 +127,7 @@ public sealed class Matrix<T> : IMatrix<T> where T : INumber<T>
     }
 
     public static Matrix<T> operator *(Matrix<T> a, Matrix<T> b) { 
+        if(a is null || b is null) throw new ArgumentNullException("Arguments cannot be null.");
         if(a.Cols != b.Rows) throw new ArgumentException("First matrix's num of columns must match second matrix's num of rows.");
 
         T[,] c = new T[a.Rows, b.Cols];

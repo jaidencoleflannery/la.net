@@ -22,6 +22,29 @@ public static class MatrixOperations {
         }
     }
 
+    
+    public static Matrix<T> ReducedRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
+        // 1. reduce to row echelon,
+        // 2. rid of upper triangular values so instance becomes an identity matrix.
+        instance.ToRowEchelon();
+
+        Matrix<T> matrix = new Matrix<T>(instance.Rows, instance.Cols);
+
+        for(int row = 0; row < (instance.Rows - 1); row++) {
+            (int row, int col) pivot = instance.FindPivot(row + 1);
+            if(pivot.col < 0) continue;
+            // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
+            var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
+            T scalar = -(rowValue1 / rowValue2);
+            // iterate through each value in second row and multiply by {scalar}, then add that value (which should be the negation of the first row's {col}) -
+            // to the first row's {col}.
+            for(int col = pivot.col; col < instance.Cols; col++) {
+                matrix[row, col] = ((scalar * rowValue2) + rowValue1);
+            }
+        }
+        return matrix;
+    }
+
     public static void ToRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
 	    // 1. sort the matrix by leading pivot index,
 	    // 2. look for pivots in the same index as {pivot} and row reduce,
@@ -62,6 +85,62 @@ public static class MatrixOperations {
             if(indices[row] > -1) instance.ScaleRow((row, indices[row])); // this is technically the row and column of row's pivot.
         }
 	}
+
+    public static Matrix<T> GetRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
+	    // 1. sort the matrix by leading pivot index,
+	    // 2. look for pivots in the same index as {pivot} and row reduce,
+	    // 3. go to next pivot and repeat until you reach row echelon form.
+	
+        var matrix = instance.Clone();
+	    var (rows, cols) = instance.GetSize(); // bounds.
+	    List<int> indices = new(); // for "bucket" sorting.
+
+	    // sort the matrix
+	    for(int row = 0; row < rows; row++) {
+            // indices is the column of each row's index (this is a key-value map so we can iterate backwards without recalling FindPivot()).
+             indices.Add((instance.FindPivot(row).col));
+            // get the pivot index for the current row
+            var pivot = indices[row];
+		    // insertion sort - check each index of {indices} until we find a value greater than pivot => place pivot after
+			for(int cursor = row; cursor > 0; cursor--) {
+				if(pivot < indices[cursor - 1]) {
+                    // keep our bucket accurate for later use
+                    (indices[cursor], indices[cursor - 1]) = (indices[cursor - 1], indices[cursor]);
+				    matrix.SwapRows(cursor, (cursor - 1));
+                } else {
+                    break;
+                } 
+		    }
+		}
+
+        // row reduce
+        for(int row = 0; row < (rows - 1); row++) { 
+            for(int comp = (row + 1); comp < rows; comp++) {
+                if(indices[row] == indices[comp]) {
+                    matrix.ReduceRow((comp, indices[comp]), (row, indices[row]));
+                    indices[comp] = instance.FindPivot(comp).col; // this returns -1 if you have a free variable.
+                }
+            }
+        }
+
+        for(int row = 0; row < rows; row++) {
+            if(indices[row] > -1) matrix.ScaleRow((row, indices[row])); // this is technically the row and column of row's pivot.
+        }
+
+        return matrix;
+	}
+
+    public static Matrix<T> Clone<T>(this Matrix<T> instance) where T : INumber<T> {
+        Matrix<T> matrix = new Matrix<T>(instance.Rows, instance.Cols);
+
+        for(int row = 0; row < instance.Rows; row++) {
+            for(int col = 0; col < instance.Cols; col++) {
+                matrix[row, col] = instance[row, col];
+            }
+        }
+
+        return matrix;
+    }
 
     public static void SwapRows<T>(this Matrix<T> instance, int row1, int row2) where T : INumber<T> {
         var rowLength = instance.GetSize().Cols;

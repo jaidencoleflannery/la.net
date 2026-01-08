@@ -31,7 +31,7 @@ public class MatrixOperatorTests
 
         Matrix<double> m = new Matrix<double>(10, 10, data);
 
-        Assert.True((m == m));
+        Assert.True(m == m);
     }
 
     [Fact]
@@ -501,5 +501,34 @@ public class MatrixOperatorTests
 
         Assert.Throws<ArgumentNullException>(() => m1 * m2);
     }
+    
+    // array indexing
+    
+    [Fact]
+    public void IndexOperator_GetValue_Success() {
+        var data = new double[,] {
+                {0, 4, 8}, 
+                {0, 3, 8},
+                {0, 1, 8},
+            };
 
+        Matrix<double> m = new Matrix<double>(3, 3, data);
+
+        Assert.Equal(8, m[1, 2]);
+    }
+
+    [Fact]
+    public void IndexOperator_SetValue_Success() {
+        var data = new double[,] {
+                {0, 4, 8}, 
+                {0, 3, 8},
+                {0, 1, 8},
+            };
+
+        Matrix<double> m = new Matrix<double>(3, 3, data);
+
+        m[0, 1] = 9;
+
+        Assert.Equal(9, m[0, 1]);
+    }
 }
