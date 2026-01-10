@@ -2,13 +2,11 @@ using System.Numerics;
 
 namespace Matrices;
 public static class MatrixOperations {
-/*
+
     public static void GetInverse(this Matrix<T> instance) where T : INumber<T> {
         Matrix<T> inverse = new Matrix<T>(instance.Rows, instance.Cols);
 
-        
     }
-    */
 
     // communal functions to avoid repeated code
     private static Matrix<T> GetReducedRowEchelon<T>(this Matrix<T> instance, Matrix<T>? inverseTarget = null) where T : INumber<T> {
