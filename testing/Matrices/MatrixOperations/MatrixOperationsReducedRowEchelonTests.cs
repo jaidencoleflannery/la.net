@@ -36,7 +36,7 @@ public class MatrixOperationsReducedRowEchelon {
             };
 
         Matrix<double> matrix = new Matrix<double>(5, 5, data);
-        var m = matrix.ReducedRowEchelon();
+        var m = matrix.GetReducedRowEchelon();
 
         for(int row = matrix.Rows; row < 5; row++) {
             for(int col = matrix.Cols; col < 5; col++) {

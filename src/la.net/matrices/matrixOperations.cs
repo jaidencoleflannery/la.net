@@ -2,44 +2,31 @@ using System.Numerics;
 
 namespace Matrices;
 public static class MatrixOperations {
+/*
+    public static void GetInverse(this Matrix<T> instance) where T : INumber<T> {
+        Matrix<T> inverse = new Matrix<T>(instance.Rows, instance.Cols);
 
-    public static void ToReducedRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
-        // 1. reduce to row echelon,
-        // 2. rid of upper triangular values so instance becomes an identity matrix.
-        instance.ToRowEchelon();
-
-        for(int row = 0; row < (instance.Rows - 1); row++) {
-            (int row, int col) pivot = instance.FindPivot(row + 1);
-            if(pivot.col < 0) continue;
-            // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
-            var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
-            T scalar = -(rowValue1 / rowValue2);
-            // iterate through each value in second row and multiply by {scalar}, then add that value (which should be the negation of the first row's {col}) -
-            // to the first row's {col}.
-            for(int col = pivot.col; col < instance.Cols; col++) {
-                instance.Set(row, col, ((scalar * rowValue2) + rowValue1));
-            }
-        }
+        
     }
+    */
 
-    
-    public static Matrix<T> ReducedRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
+    // communal functions to avoid repeated code
+    private static Matrix<T> GetReducedRowEchelon<T>(this Matrix<T> instance, Matrix<T>? inverseTarget = null) where T : INumber<T> {
         // 1. reduce to row echelon,
-        // 2. rid of upper triangular values so instance becomes an identity matrix.
-        instance.ToRowEchelon();
-
-        Matrix<T> matrix = new Matrix<T>(instance.Rows, instance.Cols);
-
-        for(int row = 0; row < (instance.Rows - 1); row++) {
-            (int row, int col) pivot = instance.FindPivot(row + 1);
-            if(pivot.col < 0) continue;
-            // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
-            var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
-            T scalar = -(rowValue1 / rowValue2);
-            // iterate through each value in second row and multiply by {scalar}, then add that value (which should be the negation of the first row's {col}) -
-            // to the first row's {col}.
-            for(int col = pivot.col; col < instance.Cols; col++) {
-                matrix[row, col] = ((scalar * rowValue2) + rowValue1);
+        // 2. rid of upper triangular values and reduce so instance becomes an identity matrix.
+        Matrix<T> matrix = instance.GetRowEchelon();
+        if(inverseTarget == null) {
+            for(int row = 0; row < (instance.Rows - 1); row++) {
+                (int row, int col) pivot = instance.FindPivot(row + 1);
+                if(pivot.col < 0) continue;
+                // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
+                var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
+                T scalar = -(rowValue1 / rowValue2);
+                // iterate through each value in second row and multiply by {scalar}, then add that value (which should be the negation of the first row's {col}) -
+                // to the first row's {col}.
+                for(int col = pivot.col; col < instance.Cols; col++) {
+                    matrix[row, col] = ((scalar * rowValue2) + rowValue1);
+                }
             }
         }
         return matrix;
