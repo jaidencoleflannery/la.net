@@ -6,14 +6,14 @@ public static class MatrixOperations {
 
     public static void GetInverse<T>(this Matrix<T> instance) where T : INumber<T> {
         var logger = new MatrixLog<T>();
-        instance.GetReducedRowEchelon<T>(instance, logger);
+        instance.GetReducedRowEchelon<T>(logger);
         Matrix<T> inverse = new Matrix<T>(instance.Rows, instance.Cols);
     }
 
     private static Matrix<T> GetReducedRowEchelon<T>(this Matrix<T> instance, MatrixLog<T> logger) where T : INumber<T> {
         // 1. reduce to row echelon,
         // 2. rid of upper triangular values and reduce so instance becomes an identity matrix.
-        Matrix<T> matrix = instance.GetRowEchelon(instance, logger);
+        Matrix<T> matrix = instance.GetRowEchelon(logger);
         for(int row = 0; row < (instance.Rows - 1); row++) {
             (int row, int col) pivot = instance.FindPivot(row + 1);
             if(pivot.col < 0) continue;
@@ -24,13 +24,13 @@ public static class MatrixOperations {
             // to the first row's {col}.
             for(int col = pivot.col; col < instance.Cols; col++) {
                 matrix[row, col] = ((scalar * rowValue2) + rowValue1);
-                logger.LogStep(new RowOperation(RowOpKind.AddScaled, row, row + 1, scalar));
+                logger.LogStep(new RowOperation<T>(RowOpKind.AddScaled, row, row + 1, scalar));
             }
         }
         return matrix;
     }
 
-    public static void ToRowEchelon<T>(this Matrix<T> instance) where T : INumber<T> {
+    public static void ToRowEchelon<T>(this Matrix<T> instance, MatrixLog<T> logger) where T : INumber<T> {
 	    // 1. sort the matrix by leading pivot index,
 	    // 2. look for pivots in the same index as {pivot} and row reduce,
 	    // 3. go to next pivot and repeat until you reach row echelon form.
@@ -60,7 +60,7 @@ public static class MatrixOperations {
         for(int row = 0; row < (rows - 1); row++) { 
             for(int comp = (row + 1); comp < rows; comp++) {
                 if(indices[row] == indices[comp]) {
-                    instance.ReduceRow((comp, indices[comp]), (row, indices[row]));
+                    instance.ReduceRow((comp, indices[comp]), (row, indices[row]), logger);
                     indices[comp] = instance.FindPivot(comp).col; // this returns -1 if you have a free variable.
                 }
             }
@@ -92,7 +92,7 @@ public static class MatrixOperations {
                     // keep our bucket accurate for later use
                     (indices[cursor], indices[cursor - 1]) = (indices[cursor - 1], indices[cursor]);
 				    matrix.SwapRows(cursor, (cursor - 1));
-                    logger.LogStep(cursor, cursor - 1);
+                    logger.LogStep(new RowOperation<T>(RowOpKind.Swap, cursor, cursor - 1, null));
                 } else {
                     break;
                 } 
@@ -105,6 +105,7 @@ public static class MatrixOperations {
                 if(indices[row] == indices[comp]) {
                     matrix.ReduceRow((comp, indices[comp]), (row, indices[row])); // indices is our bucket, so indices[row] gives us the column.
                     indices[comp] = instance.FindPivot(comp).col; // this returns -1 if you have a free variable.
+                    // we log these steps inside of ReduceRow().
                 }
             }
         }
@@ -158,13 +159,14 @@ public static class MatrixOperations {
     }
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
-    public static void ReduceRow<T>(this Matrix<T> instance, (int row, int col) target, (int row, int col) pivot) where T : INumber<T>{
+    public static void ReduceRow<T>(this Matrix<T> instance, (int row, int col) target, (int row, int col) pivot, MatrixLog<T> logger) where T : INumber<T>{
 	    // scalar needs to be a value such that pivot * scalar + target = 0, 
 	    // thus the negation of the target divided by the pivot value, multiplied by the pivot value provides the negation of the target's value. 
         T scalar = -(instance.Get(target.row, target.col) / instance.Get(pivot.row, pivot.col));
         for(int cursor = 0; cursor < instance.Cols; cursor++) {
             T value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
             instance.Set(target.row, cursor, value);
+            logger.LogStep(new RowOperation(RowOpKind.AddScaled, target.row, pivot.row, scalar));
         }
     }
 }
