@@ -2,12 +2,15 @@ using System.Numerics;
 using Matrices.Logging;
 
 namespace Matrices;
-public static class MatrixOperations {
+public static class MatrixOperations { 
 
-    public static void GetInverse<T>(this Matrix<T> instance) where T : INumber<T> {
+    public static Matrix<T> GetInverse<T>(this Matrix<T> instance) where T : INumber<T> {
         var logger = new MatrixLog<T>();
-        instance.GetReducedRowEchelon<T>(logger);
-        Matrix<T> inverse = new Matrix<T>(instance.Rows, instance.Cols);
+        Matrix<T> RRE = instance.GetReducedRowEchelon<T>(logger);
+        foreach(var rowOp in logger.rowOps) {
+            Console.WriteLine($"{rowOp.Kind}, {rowOp.R1}, {rowOp.R2}, {rowOp.Scalar}");
+        }
+        return RRE;
     }
 
     public static Matrix<T> GetReducedRowEchelon<T>(this Matrix<T> instance, MatrixLog<T>? logger = null) where T : INumber<T> {
@@ -19,15 +22,15 @@ public static class MatrixOperations {
             if(pivot.col < 0) continue;
             // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
             var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
-            T scalar = -(rowValue1 / rowValue2);
+            // at pivot index, row1's value divided by row2's value (negated) causes row2's value at pivot to go to 0.
+            double scalar = double.CreateChecked(-(rowValue1 / rowValue2));
             // iterate through each value in second row and multiply by {scalar}, 
-            // then add that value (which should be the negation of the first row's {col}) - to the first row's {col}.
+            // then add that value 
             for(int col = pivot.col; col < instance.Cols; col++) {
-                matrix[row, col] = ((scalar * rowValue2) + rowValue1);
-                if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.AddScaled, row, row + 1, scalar));
+                matrix[row, col] = ((scalar * double.CreateChecked(rowValue2)) + double.CreateChecked(rowValue1));
+                if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.AddScaled, row, row + 1, double.CreateChecked(scalar)));
             }
         }
-        Console.WriteLine($"in func before sort: \n{matrix.ToString()}");
         matrix.Sort();
         return matrix;
     }
@@ -144,7 +147,7 @@ public static class MatrixOperations {
             T value = instance.Get(target.row, cursor) * scalar;
             instance.Set(target.row, cursor, value);
         }
-        if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.Scale, r2: target.row, scalar));
+        if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.Scale, r2: target.row, double.CreateChecked(scalar)));
     }
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
@@ -155,7 +158,7 @@ public static class MatrixOperations {
         for(int cursor = 0; cursor < instance.Cols; cursor++) {
             T value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
             instance.Set(target.row, cursor, value);
-            if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.AddScaled, target.row, pivot.row, scalar));
+            if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.AddScaled, target.row, pivot.row, double.CreateChecked(scalar)));
         }
     }
 

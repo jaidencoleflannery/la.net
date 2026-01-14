@@ -7,7 +7,7 @@
         public RowOpKind Kind { get; }
         public int? R1 { get; }
         public int R2 { get; }
-        public T? Scalar { get; }
+        public double? Scalar { get; }
 
         // for swap
         public RowOperation(RowOpKind rowOpKind, int r1, int r2) {
@@ -17,14 +17,14 @@
         }
 
         // for scale
-        public RowOperation(RowOpKind rowOpKind, int r2, T scalar) {
+        public RowOperation(RowOpKind rowOpKind, int r2, double scalar) {
             Kind = rowOpKind;
             R2 = r2; // == target row being scaled.
             Scalar = scalar;
         }
 
         // for addscaled
-        public RowOperation(RowOpKind rowOpKind, int r1, int r2, T scalar) {
+        public RowOperation(RowOpKind rowOpKind, int r1, int r2, double scalar) {
             Kind = rowOpKind;
             R1 = r1; // == row being scaled for addition.
             R2 = r2; // == target row being augmented by scaled r1.

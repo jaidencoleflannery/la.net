@@ -3,7 +3,7 @@ using System.Numerics;
 namespace Matrices.Logging;
 
 public class MatrixLog<T> where T : INumber<T> {
-    List<RowOperation<T>> rowOps;
+    public List<RowOperation<T>> rowOps { get; private set; }
 
     public MatrixLog() {
         this.rowOps = new List<RowOperation<T>>();
