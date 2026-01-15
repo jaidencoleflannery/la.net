@@ -22,13 +22,13 @@ public static class MatrixOperations {
             if(pivot.col < 0) continue;
             // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
             var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
-            // at pivot index, row1's value divided by row2's value (negated) causes row2's value at pivot to go to 0.
+            // at pivot index, row1's value divided by row2's value (negated) causes row1's value at pivot to go to 0.
             double scalar = double.CreateChecked(-(rowValue1 / rowValue2));
             // iterate through each value in second row and multiply by {scalar}, 
-            // then add that value 
+            // then add that value to row 1 
             for(int col = pivot.col; col < instance.Cols; col++) {
-                matrix[row, col] = ((scalar * double.CreateChecked(rowValue2)) + double.CreateChecked(rowValue1));
-                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row, row + 1, double.CreateChecked(scalar)));
+                matrix[row, col] = (scalar * rowValue2 + rowValue1);
+                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, row, scalar));
             }
         }
         matrix.Sort();
@@ -147,7 +147,7 @@ public static class MatrixOperations {
             double value = instance.Get(target.row, cursor) * scalar;
             instance.Set(target.row, cursor, value);
         }
-        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, r2: target.row, double.CreateChecked(scalar)));
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, target.row, scalar));
     }
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
@@ -158,8 +158,8 @@ public static class MatrixOperations {
         for(int cursor = 0; cursor < instance.Cols; cursor++) {
             double value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
             instance.Set(target.row, cursor, value);
-            if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, target.row, pivot.row, double.CreateChecked(scalar)));
         }
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, pivot.row, target.row, double.CreateChecked(scalar)));
     }
 
     public static List<int> Sort(this Matrix instance) {

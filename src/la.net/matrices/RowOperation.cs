@@ -12,8 +12,8 @@
         // for swap
         public RowOperation(RowOpKind rowOpKind, int r1, int r2) {
             Kind = rowOpKind;
-            R1 = r1; // == row being scaled for addition (nullable).
-            R2 = r2; // == row being augmented (or directly scaled).
+            R1 = r1;
+            R2 = r2; 
         }
 
         // for scale
