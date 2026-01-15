@@ -1,7 +1,6 @@
-using System.Numerics;
 
 namespace Matrices;
-public interface IMatrix<T> where T : INumber<T> {
+public interface IMatrix {
     
     /// <summary>
     /// returns the number of rows in the matrix.
@@ -16,32 +15,32 @@ public interface IMatrix<T> where T : INumber<T> {
 	/// <summary>
 	/// gets a value from the specified row and column of matrix.
 	/// </summary>
-	T Get(int row, int col);
+	double Get(int row, int col);
 	
 	/// <summary>
 	/// gets the specified row (array) of values from matrix.
 	/// </summary>
-	T[] GetRow(int row);
+	double[] GetRow(int row);
 
 	/// <summary>
 	/// augments existing matrix's value stored in specified row and column.
 	/// </summary>
-    void Set(int row, int col, T value);
+    void Set(int row, int col, double value);
 
 	/// <summary>
 	/// replaces the specified row (array) of values from matrix with provided array.
 	/// </summary>
-    void SetRow (int row, T[] value, Boolean conform);
+    void SetRow (int row, double[] value, Boolean conform);
 
 	/// <summary>
 	/// pushes a new row to the beginning (top) of the matrix. 
 	/// </summary>
-    void PushRow (T[] value, Boolean conform);
+    void PushRow (double[] value, Boolean conform);
 
 	/// <summary>
 	/// appends a row to the end (bottom) of the matrix.
 	/// </summary>
-    void AppendRow (T[] values, Boolean conform);
+    void AppendRow (double[] values, Boolean conform);
 
 	/// <summary>
 	/// returns a tuple (rows, columns) of the current size of the matrix.

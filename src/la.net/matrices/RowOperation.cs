@@ -2,7 +2,7 @@
     
     public enum RowOpKind {Swap, Scale, AddScaled};
 
-    public struct RowOperation<T> {
+    public struct RowOperation {
 
         public RowOpKind Kind { get; }
         public int? R1 { get; }

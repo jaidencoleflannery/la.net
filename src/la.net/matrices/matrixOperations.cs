@@ -8,12 +8,12 @@ public static class MatrixOperations {
         var logger = new MatrixLog();
         Matrix RRE = instance.GetReducedRowEchelon(logger);
         foreach(var rowOp in logger.rowOps) {
-            Console.WriteLine($"{rowOp.Kind}, {rowOp.R1}, {rowOp.R2}, {rowOp.Scalar}");
+            Console.WriteLine($"{rowOp.Kind}, {rowOp.R1}, {rowOp.R2}, {rowOp.Scalar:0.0#######}");
         }
         return RRE;
     }
 
-    public static Matrix GetReducedRowEchelon<T>(this Matrix instance, MatrixLog? logger = null) where T : INumber<T> {
+    public static Matrix GetReducedRowEchelon(this Matrix instance, MatrixLog? logger = null) {
         // 1. reduce to row echelon,
         // 2. rid of upper triangular values and reduce so instance becomes an identity matrix.
         Matrix matrix = instance.GetRowEchelon(logger);

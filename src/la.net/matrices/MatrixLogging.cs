@@ -3,13 +3,13 @@ using System.Numerics;
 namespace Matrices.Logging;
 
 public class MatrixLog {
-    public List<RowOperation<double>> rowOps { get; private set; }
+    public List<RowOperation> rowOps { get; private set; }
 
     public MatrixLog() {
-        this.rowOps = new List<RowOperation<double>>();
+        this.rowOps = new List<RowOperation>();
     }
 
-    public void LogStep(RowOperation<double> rowOp) {
+    public void LogStep(RowOperation rowOp) {
         this.rowOps.Add(rowOp);
     }
 }
