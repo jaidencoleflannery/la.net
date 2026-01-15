@@ -2,14 +2,14 @@ using System.Numerics;
 
 namespace Matrices.Logging;
 
-public class MatrixLog<T> where T : INumber<T> {
-    public List<RowOperation<T>> rowOps { get; private set; }
+public class MatrixLog {
+    public List<RowOperation<double>> rowOps { get; private set; }
 
     public MatrixLog() {
-        this.rowOps = new List<RowOperation<T>>();
+        this.rowOps = new List<RowOperation<double>>();
     }
 
-    public void LogStep(RowOperation<T> rowOp) {
+    public void LogStep(RowOperation<double> rowOp) {
         this.rowOps.Add(rowOp);
     }
 }

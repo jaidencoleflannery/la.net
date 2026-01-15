@@ -4,19 +4,19 @@ using Matrices.Logging;
 namespace Matrices;
 public static class MatrixOperations { 
 
-    public static Matrix<T> GetInverse<T>(this Matrix<T> instance) where T : INumber<T> {
-        var logger = new MatrixLog<T>();
-        Matrix<T> RRE = instance.GetReducedRowEchelon<T>(logger);
+    public static Matrix GetInverse(this Matrix instance) {
+        var logger = new MatrixLog();
+        Matrix RRE = instance.GetReducedRowEchelon(logger);
         foreach(var rowOp in logger.rowOps) {
             Console.WriteLine($"{rowOp.Kind}, {rowOp.R1}, {rowOp.R2}, {rowOp.Scalar}");
         }
         return RRE;
     }
 
-    public static Matrix<T> GetReducedRowEchelon<T>(this Matrix<T> instance, MatrixLog<T>? logger = null) where T : INumber<T> {
+    public static Matrix GetReducedRowEchelon<T>(this Matrix instance, MatrixLog? logger = null) where T : INumber<T> {
         // 1. reduce to row echelon,
         // 2. rid of upper triangular values and reduce so instance becomes an identity matrix.
-        Matrix<T> matrix = instance.GetRowEchelon(logger);
+        Matrix matrix = instance.GetRowEchelon(logger);
         for(int row = 0; row < (instance.Rows - 1); row++) {
             (int row, int col) pivot = instance.FindPivot(row + 1);
             if(pivot.col < 0) continue;
@@ -28,14 +28,14 @@ public static class MatrixOperations {
             // then add that value 
             for(int col = pivot.col; col < instance.Cols; col++) {
                 matrix[row, col] = ((scalar * double.CreateChecked(rowValue2)) + double.CreateChecked(rowValue1));
-                if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.AddScaled, row, row + 1, double.CreateChecked(scalar)));
+                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row, row + 1, double.CreateChecked(scalar)));
             }
         }
         matrix.Sort();
         return matrix;
     }
 
-    public static void ToRowEchelon<T>(this Matrix<T> instance, MatrixLog<T>? logger = null) where T : INumber<T> {
+    public static void ToRowEchelon(this Matrix instance, MatrixLog? logger = null) {
 	    // 1. sort the matrix by leading pivot index,
 	    // 2. look for pivots in the same index as {pivot} and row reduce,
 	    // 3. go to next pivot and repeat until you reach row echelon form.
@@ -61,7 +61,7 @@ public static class MatrixOperations {
         }
 	}
 
-    public static Matrix<T> GetRowEchelon<T>(this Matrix<T> instance, MatrixLog<T>? logger = null) where T : INumber<T> {
+    public static Matrix GetRowEchelon(this Matrix instance, MatrixLog? logger = null) {
 	    // 1. sort the matrix by leading pivot index,
 	    // 2. look for pivots in the same index as {pivot} and row reduce,
 	    // 3. go to next pivot and repeat until you reach row echelon form.
@@ -108,8 +108,8 @@ public static class MatrixOperations {
         return matrix;
 	}
 
-    public static Matrix<T> Clone<T>(this Matrix<T> instance) where T : INumber<T> {
-        Matrix<T> matrix = new Matrix<T>(instance.Rows, instance.Cols);
+    public static Matrix Clone(this Matrix instance) {
+        Matrix matrix = new Matrix(instance.Rows, instance.Cols);
 
         for(int row = 0; row < instance.Rows; row++) {
             for(int col = 0; col < instance.Cols; col++) {
@@ -120,49 +120,49 @@ public static class MatrixOperations {
         return matrix;
     }
 
-    public static void SwapRows<T>(this Matrix<T> instance, int row1, int row2, MatrixLog<T>? logger = null) where T : INumber<T> {
+    public static void SwapRows(this Matrix instance, int row1, int row2, MatrixLog? logger = null) {
         var rowLength = instance.GetSize().Cols;
         for(int col = 0; col < rowLength; col++) {
-            T temp = instance.Get(row1, col);
+            double temp = instance.Get(row1, col);
             instance.Set(row1, col, instance.Get(row2, col));
             instance.Set(row2, col, temp);
         }
-        if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.Swap, row1, row2));
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Swap, row1, row2));
     }
 
-    public static (int row, int col) FindPivot<T>(this Matrix<T> instance, int row) where T : INumber<T> { 
+    public static (int row, int col) FindPivot(this Matrix instance, int row) { 
         int col = 0;
 	    while(col < instance.Cols) {
-		    if(instance.Get(row, col) != T.Zero) {
+		    if(instance.Get(row, col) != 0.0) {
 			    return(row, col);
 		    } else col++;
 	    }
 	    return (row, -1);
     }
 
-    public static void ScaleRow<T>(this Matrix<T> instance, (int row, int pivot) target, MatrixLog<T>? logger = null) where T : INumber<T> {
+    public static void ScaleRow(this Matrix instance, (int row, int pivot) target, MatrixLog? logger = null) {
         // scalar needs to be a value such that pivot * scalar = 1.
-        T scalar = T.One / T.CreateChecked(instance.Get(target.row, target.pivot));
+        double scalar = 1.0 / instance.Get(target.row, target.pivot);
         for(int cursor = target.pivot; cursor < instance.Cols; cursor++) {
-            T value = instance.Get(target.row, cursor) * scalar;
+            double value = instance.Get(target.row, cursor) * scalar;
             instance.Set(target.row, cursor, value);
         }
-        if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.Scale, r2: target.row, double.CreateChecked(scalar)));
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, r2: target.row, double.CreateChecked(scalar)));
     }
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
-    public static void ReduceRow<T>(this Matrix<T> instance, (int row, int col) target, (int row, int col) pivot, MatrixLog<T>? logger = null) where T : INumber<T>{
+    public static void ReduceRow(this Matrix instance, (int row, int col) target, (int row, int col) pivot, MatrixLog? logger = null) {
 	    // scalar needs to be a value such that pivot * scalar + target = 0, 
 	    // thus the negation of the target divided by the pivot value, multiplied by the pivot value provides the negation of the target's value. 
-        T scalar = -(instance.Get(target.row, target.col) / instance.Get(pivot.row, pivot.col));
+        double scalar = -(instance.Get(target.row, target.col) / instance.Get(pivot.row, pivot.col));
         for(int cursor = 0; cursor < instance.Cols; cursor++) {
-            T value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
+            double value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
             instance.Set(target.row, cursor, value);
-            if(logger is not null) logger.LogStep(new RowOperation<T>(RowOpKind.AddScaled, target.row, pivot.row, double.CreateChecked(scalar)));
+            if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, target.row, pivot.row, double.CreateChecked(scalar)));
         }
     }
 
-    public static List<int> Sort<T>(this Matrix<T> instance) where T : INumber<T> {
+    public static List<int> Sort(this Matrix instance) {
         // sort the matrix in place and return a list where index = row, value = pivot.
         List<int> indices = new();
 	    for(int row = 0; row < instance.Rows; row++) {
