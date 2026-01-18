@@ -14,8 +14,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         bool response = (m1 == m2);
         Assert.True(response);
@@ -29,7 +29,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m = new Matrix<double>(10, 10, data);
+        Matrix m = new Matrix(10, 10, data);
 
         Assert.True(m == m);
     }
@@ -42,8 +42,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.True((m2 == m1) == (m1 == m2));
     }
@@ -56,8 +56,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.True((m2 == m1) != (m2 != m1));
     }
@@ -70,8 +70,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.True(m1.Equals(m2) == (m1 == m2));
     }
@@ -84,13 +84,13 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
         data =  new double[,] {
             {0, 4, 8}, 
             {0, 2, 8},
             {0, 1, 8},
         };
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.False(m1.Equals(m2));
     }
@@ -103,7 +103,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
 
         data = new double[,] {
                 {0, 4, 8}, 
@@ -111,7 +111,7 @@ public class MatrixOperatorTests
                 {1, 1, 8},
             };
 
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         bool response = (m1 == m2);
         Assert.False(response);
@@ -125,8 +125,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.True(m1.GetHashCode() == m2.GetHashCode());
     }
@@ -141,8 +141,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.False(m1 != m2);
     }
@@ -155,7 +155,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m = new Matrix<double>(10, 10, data);
+        Matrix m = new Matrix(10, 10, data);
 
         Assert.False(m != m);
     }
@@ -168,8 +168,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.False((m2 == m1) != (m1 == m2));
     }
@@ -182,8 +182,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.True((m2 != m1) != (m2 == m1));
     }
@@ -196,8 +196,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.False(m1.Equals(m2) != (m1 == m2));
     }
@@ -210,13 +210,13 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(6, 6, data);
+        Matrix m1 = new Matrix(6, 6, data);
         data =  new double[,] {
             {0, 4, 8}, 
             {0, 2, 8},
             {0, 1, 8},
         };
-        Matrix<double> m2 = new Matrix<double>(6, 6, data);
+        Matrix m2 = new Matrix(6, 6, data);
 
         Assert.False(m1.Equals(m2));
     }
@@ -229,13 +229,13 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
         data =  new double[,] {
             {0, 4, 8}, 
             {0, 2, 8},
             {0, 1, 8},
         };
-        Matrix<double> m2 = new Matrix<double>(6, 6, data);
+        Matrix m2 = new Matrix(6, 6, data);
 
         Assert.False(m1.Equals(m2));
     }
@@ -248,7 +248,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
 
         data = new double[,] {
                 {0, 4, 8}, 
@@ -256,7 +256,7 @@ public class MatrixOperatorTests
                 {1, 1, 8},
             };
 
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.False(m1 == m2);
     }
@@ -269,8 +269,8 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(10, 10, data);
-        Matrix<double> m2 = new Matrix<double>(10, 10, data);
+        Matrix m1 = new Matrix(10, 10, data);
+        Matrix m2 = new Matrix(10, 10, data);
 
         Assert.False(m1.GetHashCode() != m2.GetHashCode());
     }
@@ -283,7 +283,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(4, 4, data);
+        Matrix m1 = new Matrix(4, 4, data);
 
         data =  new double[,] {
                 {0, 4, 8}, 
@@ -291,7 +291,7 @@ public class MatrixOperatorTests
                 {0, 2, 8},
             };
 
-        Matrix<double> m2 = new Matrix<double>(4, 4, data);
+        Matrix m2 = new Matrix(4, 4, data);
 
         Assert.True(m1.GetHashCode() != m2.GetHashCode());
     }
@@ -308,7 +308,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {0, 4, 8}, 
@@ -316,7 +316,7 @@ public class MatrixOperatorTests
             {0, 1, 8},
         };
 
-        Matrix<double> m2 = new Matrix<double>(3, 3, data);
+        Matrix m2 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {0, 8, 16},
@@ -324,7 +324,7 @@ public class MatrixOperatorTests
             {0, 2, 16},
         };
 
-        Matrix<double> result = new Matrix<double>(3, 3, data);
+        Matrix result = new Matrix(3, 3, data);
 
         Assert.True((m1 + m2) == result);
     }
@@ -337,7 +337,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {0, 4, 8}, 
@@ -346,7 +346,7 @@ public class MatrixOperatorTests
             {0, 3, 8},
         };
 
-        Matrix<double> m2 = new Matrix<double>(4, 3, data);
+        Matrix m2 = new Matrix(4, 3, data);
 
         Assert.Throws<ArgumentException>(() => m1 + m2);
     }
@@ -359,9 +359,9 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
-        Matrix<double> m2 = null;
+        Matrix m2 = null;
 
         Assert.Throws<ArgumentNullException>(() => m1 + m2);
     }
@@ -376,7 +376,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {0, 4, 9}, 
@@ -384,7 +384,7 @@ public class MatrixOperatorTests
             {1, 1, 8},
         };
 
-        Matrix<double> m2 = new Matrix<double>(3, 3, data);
+        Matrix m2 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {0, 0, -1},
@@ -392,7 +392,7 @@ public class MatrixOperatorTests
             {-1, 0, 0},
         };
 
-        Matrix<double> result = new Matrix<double>(3, 3, data);
+        Matrix result = new Matrix(3, 3, data);
 
         Assert.True((m1 - m2) == result);
     }
@@ -405,7 +405,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {0, 4, 8}, 
@@ -414,7 +414,7 @@ public class MatrixOperatorTests
             {0, 3, 8},
         };
 
-        Matrix<double> m2 = new Matrix<double>(4, 3, data);
+        Matrix m2 = new Matrix(4, 3, data);
 
         Assert.Throws<ArgumentException>(() => m1 - m2);
     }
@@ -427,9 +427,9 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
-        Matrix<double> m2 = null;
+        Matrix m2 = null;
 
         Assert.Throws<ArgumentNullException>(() => m1 - m2);
     }
@@ -444,7 +444,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {2, 1, 1}, 
@@ -452,7 +452,7 @@ public class MatrixOperatorTests
             {1, 0, 2},
         };
 
-        Matrix<double> m2 = new Matrix<double>(3, 3, data);
+        Matrix m2 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {8, 8, 20},
@@ -460,7 +460,7 @@ public class MatrixOperatorTests
             {8, 2, 17},
         };
 
-        Matrix<double> result = new Matrix<double>(3, 3, data);
+        Matrix result = new Matrix(3, 3, data);
 
         Assert.True((m1 * m2) == result);
     }
@@ -473,7 +473,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
         data = new double[,] {
             {0, 4, 8}, 
@@ -482,7 +482,7 @@ public class MatrixOperatorTests
             {0, 3, 8},
         };
 
-        Matrix<double> m2 = new Matrix<double>(4, 3, data);
+        Matrix m2 = new Matrix(4, 3, data);
 
         Assert.Throws<ArgumentException>(() => m1 * m2);
     }
@@ -495,9 +495,9 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m1 = new Matrix<double>(3, 3, data);
+        Matrix m1 = new Matrix(3, 3, data);
 
-        Matrix<double> m2 = null;
+        Matrix m2 = null;
 
         Assert.Throws<ArgumentNullException>(() => m1 * m2);
     }
@@ -512,7 +512,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m = new Matrix<double>(3, 3, data);
+        Matrix m = new Matrix(3, 3, data);
 
         Assert.Equal(8, m[1, 2]);
     }
@@ -525,7 +525,7 @@ public class MatrixOperatorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> m = new Matrix<double>(3, 3, data);
+        Matrix m = new Matrix(3, 3, data);
 
         m[0, 1] = 9;
 

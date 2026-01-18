@@ -10,7 +10,7 @@ public class MatrixAccessorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> matrix = new Matrix<double>(10, 10, data);
+        Matrix matrix = new Matrix(10, 10, data);
 
         for(int row = 0; row < 3; row++) {
             for(int col = 0; col < 3; col++) {

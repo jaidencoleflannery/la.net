@@ -5,8 +5,8 @@ public class MatrixOperationsReducedRowEchelon {
     // reduced row echelon
     
     [Fact]
-    public void ToRRE_AugmentsRREFormOfMatrix_Success() {
-        var data =  new double[,] {
+    public void GetRRE_AugmentsRREFormOfMatrix_Success() {
+        var data = new double[,] {
                 {0, 4, 8, 2, 7}, 
                 {9, 3, 8, 4, 6},
                 {0, 1, 8, 3, 4},
@@ -14,8 +14,8 @@ public class MatrixOperationsReducedRowEchelon {
                 {9, 8, 8, 1, 5},
             };
 
-        Matrix<double> matrix = new Matrix<double>(5, 5, data);
-        matrix.ToReducedRowEchelon();
+        Matrix matrix = new Matrix(5, 5, data);
+        matrix = matrix.GetReducedRowEchelon();
 
         for(int row = matrix.Rows; row < 5; row++) {
             for(int col = matrix.Cols; col < 5; col++) {
@@ -35,7 +35,7 @@ public class MatrixOperationsReducedRowEchelon {
                 {9, 8, 8, 1, 5},
             };
 
-        Matrix<double> matrix = new Matrix<double>(5, 5, data);
+        Matrix matrix = new Matrix(5, 5, data);
         var m = matrix.GetReducedRowEchelon();
 
         for(int row = matrix.Rows; row < 5; row++) {
@@ -55,7 +55,7 @@ public class MatrixOperationsReducedRowEchelon {
                 {9, 3},
             };
 
-        Matrix<double> matrix = new Matrix<double>(5, 5, data);
+        Matrix matrix = new Matrix(5, 5, data);
         var m = matrix.GetRowEchelon();
 
         Assert.Equal(1, m[0, 0]);

@@ -8,7 +8,7 @@ public class MatrixConstructorTests
     [InlineData(4, 3)]
     [InlineData(14, 32)]
     public void Ctor_SetsRowsAndCols_Success(int rows, int cols) {
-        Matrix<double> matrix = new Matrix<double>(rows, cols,
+        Matrix matrix = new Matrix(rows, cols,
             new double[,] {
                 {0, 4, 8}, 
                 {0, 0, 8},
@@ -33,7 +33,7 @@ public class MatrixConstructorTests
             {0, 1, 8},
         };
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Matrix<double>(rows, cols, data));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Matrix(rows, cols, data));
     }
 
     [Theory]
@@ -47,7 +47,7 @@ public class MatrixConstructorTests
             {0, 1, 8},
         };
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => new Matrix<double>(rows, cols, data));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Matrix(rows, cols, data));
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public class MatrixConstructorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> matrix = new Matrix<double>(3, 3, data);
+        Matrix matrix = new Matrix(3, 3, data);
 
         for(int row = 0; row < matrix.Rows; row++) {
             for(int col = 0; col < matrix.Cols; col++) {
@@ -69,7 +69,7 @@ public class MatrixConstructorTests
 
     [Fact]
     public void Ctor_NoData_CreatesIdentityMatrixProperly_Success() {
-        Matrix<double> matrix = new Matrix<double>(3, 3);
+        Matrix matrix = new Matrix(3, 3);
 
         for(int row = 0; row < matrix.Rows; row++) {
             for(int col = 0; col < matrix.Cols; col++) {
@@ -85,7 +85,7 @@ public class MatrixConstructorTests
             {0, 9, 6},
             {8, 2, 1},
         };
-        Matrix<double> matrix = new Matrix<double>(2, 3, data);
+        Matrix matrix = new Matrix(2, 3, data);
         data[0, 0] = 3;
         Assert.Equal(matrix[0, 0], 0);
     }
@@ -98,7 +98,7 @@ public class MatrixConstructorTests
                 {0, 1, 8},
             };
 
-        Matrix<double> matrix = new Matrix<double>(5, 5, data);
+        Matrix matrix = new Matrix(5, 5, data);
 
         for(int row = 0; row < 3; row++) {
             for(int col = 0; col < 3; col++) {
