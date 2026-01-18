@@ -7,7 +7,15 @@ public static class MatrixOperations {
     public static Matrix GetInverse(this Matrix instance) {
         var logger = new MatrixLog();
         Matrix RRE = instance.GetReducedRowEchelon(logger);
-        foreach(RowOperation op in logger.rowOps) Console.WriteLine($"{op.Kind}, {op.R1}, {op.R2}, {op.Scalar}");
+        foreach(RowOperation op in logger.rowOps) {
+            Console.WriteLine($"{op.Kind}, {op.R1}, {op.R2}, {op.Scalar}");
+            if(op.Kind == RowOpKind.Swap) {
+                RRE.SwapRows(op.R1.Value, op.R2);
+            }
+            else if(op.Kind == RowOpKind.Scale) {
+                RRE.ScaleRow(op.R2, op.Scalar);
+            }
+        }
         return RRE;
     }
 
@@ -28,9 +36,9 @@ public static class MatrixOperations {
                     // then add that value to row 1
                     var (augmentedValue, targetValue) = (matrix.Get((row + 1), col), matrix.Get(currRow, col));
                     matrix[currRow, col] = (scalar * augmentedValue + targetValue);
-                    if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, currRow, scalar));
                 }
-            }
+                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, row, scalar));
+            } 
         }
         return matrix;
     }
