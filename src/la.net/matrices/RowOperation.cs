@@ -18,11 +18,10 @@
         }
 
         // for scale
-        public RowOperation(RowOpKind rowOpKind, int r2, double scalar, int pivot) {
+        public RowOperation(RowOpKind rowOpKind, int r2, double scalar) {
             Kind = rowOpKind;
             R2 = r2; // == target row being scaled.
             Scalar = scalar;
-            Pivot = pivot;
         }
 
         // for addscaled

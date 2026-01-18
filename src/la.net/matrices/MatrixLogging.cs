@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace Matrices.Logging;
 
 public class MatrixLog {

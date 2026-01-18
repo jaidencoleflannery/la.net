@@ -1,4 +1,3 @@
-using System.Numerics;
 using System.Text;
 
 namespace Matrices;
@@ -252,7 +251,7 @@ public sealed class Matrix : IMatrix
         for (int row = 0; row < Rows; row++)
         {
             sb.Append("| ");
-            for (int col = 0; col < Cols; col++) sb.Append($"{_data[row, col]} ");
+            for (int col = 0; col < Cols; col++) sb.Append($"{_data[row, col]:F3} ");
             sb.Append("|");
             sb.AppendLine("");
         }

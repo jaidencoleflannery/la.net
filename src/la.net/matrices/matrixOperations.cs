@@ -1,4 +1,3 @@
-using System.Numerics;
 using Matrices.Logging;
 
 namespace Matrices;
@@ -6,15 +5,13 @@ public static class MatrixOperations {
 
     public static Matrix GetInverse(this Matrix instance) {
         var logger = new MatrixLog();
-        Matrix RRE = instance.GetReducedRowEchelon(logger);
+        Matrix inverse = instance.GetReducedRowEchelon(logger); // log all steps in RRE process and return identity matrix.
         foreach(RowOperation op in logger.rowOps) {
-            Console.WriteLine($"{op.Kind}, {op.R1}, {op.R2}, {op.Scalar}");
-            Console.WriteLine($"{RRE.ToString()}");
-            if(op.Kind == RowOpKind.Swap) RRE.SwapRows(op.R1.Value, op.R2);
-            else if(op.Kind == RowOpKind.Scale) RRE.ScaleRow((op.R2, op.Pivot), scalar: op.Scalar.Value);
-            else if(op.Kind == RowOpKind.AddScaled) RRE.ScaleRow((op.R2, op.Pivot), scalar: op.Scalar.Value);
+            if(op.Kind == RowOpKind.Swap) inverse.SwapRows(op.R1!.Value, op.R2);
+            else if(op.Kind == RowOpKind.Scale) inverse.ScaleRow((op.R2, op.Pivot), scalar: op.Scalar);
+            else if(op.Kind == RowOpKind.AddScaled) inverse.AddScaledRow(op.R1!.Value, op.R2, scalar: op.Scalar!.Value);
         }
-        return RRE;
+        return inverse;
     }
 
     public static Matrix GetReducedRowEchelon(this Matrix instance, MatrixLog? logger = null) {
@@ -62,7 +59,7 @@ public static class MatrixOperations {
         }
 
         for(int row = 0; row < rows; row++) {
-            if(indices[row] > -1) instance.ScaleRow((row, indices[row]), logger); // this is technically the row and column of row's pivot.
+            if(indices[row] > -1) instance.ScaleRow((row, indices[row]), logger: logger); // this is technically the row and column of row's pivot.
             // we log this in ScaleRow().
         }
 	}
@@ -108,7 +105,7 @@ public static class MatrixOperations {
         }
 
         for(int row = 0; row < rows; row++) {
-            if(indices[row] > -1) matrix.ScaleRow((row, indices[row])); // this is technically the row and column of row's pivot.
+            if(indices[row] > -1) matrix.ScaleRow((row, indices[row]), logger: logger); // this is technically the row and column of row's pivot.
             // we log these steps inside of ScaleRow(). 
         }
 
@@ -147,14 +144,24 @@ public static class MatrixOperations {
 	    return (row, -1);
     }
 
-    public static void ScaleRow(this Matrix instance, (int row, int pivot) target, MatrixLog? logger = null, double scalar = -1) {
+    // reduce the specified row so the pivot == 1
+    public static void ScaleRow(this Matrix instance, (int row, int pivot) target, double? scalar = null, MatrixLog? logger = null) {
         // scalar needs to be a value such that pivot * scalar = 1.
-        if(scalar == -1) scalar = 1.0 / instance.Get(target.row, target.pivot);
+        if(scalar == null) scalar = 1.0 / instance.Get(target.row, target.pivot);
         for(int cursor = target.pivot; cursor < instance.Cols; cursor++) {
-            double value = instance.Get(target.row, cursor) * scalar;
+            double value = instance.Get(target.row, cursor) * scalar!.Value;
             instance.Set(target.row, cursor, value);
         }
-        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, target.row, scalar: scalar, target.pivot));
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, target.row, scalar: scalar!.Value));
+    }
+
+    public static void AddScaledRow(this Matrix instance, int augmentedRow, int targetRow, double scalar, MatrixLog? logger = null) {
+        // scalar needs to be a value such that pivot * scalar = 1.
+        for(int col = 0; col < instance.Cols; col++) {
+            double value = scalar * instance.Get(augmentedRow, col);
+            instance[targetRow, col] = instance.Get(targetRow, col) + value;
+        }
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, targetRow, scalar: scalar));
     }
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
