@@ -7,9 +7,6 @@ public static class MatrixOperations {
     public static Matrix GetInverse(this Matrix instance) {
         var logger = new MatrixLog();
         Matrix RRE = instance.GetReducedRowEchelon(logger);
-        foreach(var rowOp in logger.rowOps) {
-            Console.WriteLine($"{rowOp.Kind}, {rowOp.R1}, {rowOp.R2}, {rowOp.Scalar:0.0#######}");
-        }
         return RRE;
     }
 
@@ -18,20 +15,24 @@ public static class MatrixOperations {
         // 2. rid of upper triangular values and reduce so instance becomes an identity matrix.
         Matrix matrix = instance.GetRowEchelon(logger);
         for(int row = 0; row < (instance.Rows - 1); row++) {
-            (int row, int col) pivot = instance.FindPivot(row + 1);
+            (int row, int col) pivot = matrix.FindPivot(row + 1);
+            Console.WriteLine($"instance: \n{matrix.ToString()}pivot found: {pivot.row}, {pivot.col}.\n");
             if(pivot.col < 0) continue;
             // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
-            var (rowValue1, rowValue2) = (instance.Get(row, pivot.col), instance.Get((row + 1), pivot.col));
-            // at pivot index, row1's value divided by row2's value (negated) causes row1's value at pivot to go to 0.
-            double scalar = double.CreateChecked(-(rowValue1 / rowValue2));
-            // iterate through each value in second row and multiply by {scalar}, 
-            // then add that value to row 1 
-            for(int col = pivot.col; col < instance.Cols; col++) {
-                matrix[row, col] = (scalar * rowValue2 + rowValue1);
+            var (rowValue1, rowValue2) = (matrix.Get(row, pivot.col), matrix.Get((row + 1), pivot.col));
+            // at pivot index, row1's value divided by row2's value (negated) causes row1's value at pivot to go to 0. 
+            double scalar = -(rowValue1 / rowValue2);
+            Console.WriteLine($"scalar: {scalar}");
+            for(int col = pivot.col; col < matrix.Cols; col++) {  
+                // iterate through each value in second row and multiply by {scalar}, 
+                // then add that value to row 1
+                var (augmentedValue, targetValue) = (matrix.Get((row + 1), col), matrix.Get(row, col));
+                Console.WriteLine($"value set: ({scalar} * {rowValue2} + {targetValue})");
+                matrix[row, col] = (scalar * augmentedValue + targetValue);
                 if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, row, scalar));
             }
         }
-        matrix.Sort();
+        //matrix.Sort(logger);
         return matrix;
     }
 
@@ -42,7 +43,7 @@ public static class MatrixOperations {
 	
 	    var (rows, cols) = instance.GetSize(); // bounds.
 
-	    List<int> indices =  instance.Sort(); // sort the matrix - gives us our pivot buckets in indices.
+	    List<int> indices = instance.Sort(logger); // sort the matrix - gives us our pivot buckets in indices.
 
         // row reduce
         for(int row = 0; row < (rows - 1); row++) { 
@@ -56,7 +57,7 @@ public static class MatrixOperations {
         }
 
         for(int row = 0; row < rows; row++) {
-            if(indices[row] > -1) instance.ScaleRow((row, indices[row])); // this is technically the row and column of row's pivot.
+            if(indices[row] > -1) instance.ScaleRow((row, indices[row]), logger); // this is technically the row and column of row's pivot.
             // we log this in ScaleRow().
         }
 	}
@@ -70,7 +71,8 @@ public static class MatrixOperations {
 	    var (rows, cols) = instance.GetSize(); // bounds.
 	    List<int> indices = new(); // for "bucket" sorting.
 
-	    // sort the matrix
+	    // sort the matrix - we do not use SortMatrix because we need to use the bucket values 
+        // (double check this, might need refactoring).
 	    for(int row = 0; row < rows; row++) {
             // indices is the column of each row's index (this is a key-value map so we can iterate backwards without recalling FindPivot()).
              indices.Add((instance.FindPivot(row).col));
@@ -81,7 +83,7 @@ public static class MatrixOperations {
 				if(pivot < indices[cursor - 1]) {
                     // keep our bucket accurate for later use
                     (indices[cursor], indices[cursor - 1]) = (indices[cursor - 1], indices[cursor]);
-				    matrix.SwapRows(cursor, (cursor - 1));
+				    matrix.SwapRows(cursor, (cursor - 1), logger);
                     // we log these steps inside of SwapRows().
                 } else {
                     break;
@@ -130,7 +132,7 @@ public static class MatrixOperations {
         if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Swap, row1, row2));
     }
 
-    public static (int row, int col) FindPivot(this Matrix instance, int row) { 
+    public static (int row, int col) FindPivot(this Matrix instance, int row) {
         int col = 0;
 	    while(col < instance.Cols) {
 		    if(instance.Get(row, col) != 0.0) {
@@ -147,7 +149,7 @@ public static class MatrixOperations {
             double value = instance.Get(target.row, cursor) * scalar;
             instance.Set(target.row, cursor, value);
         }
-        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, target.row, scalar));
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, target.row, scalar: scalar));
     }
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
@@ -159,10 +161,10 @@ public static class MatrixOperations {
             double value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
             instance.Set(target.row, cursor, value);
         }
-        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, pivot.row, target.row, double.CreateChecked(scalar)));
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, pivot.row, target.row, scalar));
     }
 
-    public static List<int> Sort(this Matrix instance) {
+    public static List<int> Sort(this Matrix instance, MatrixLog? logger = null) {
         // sort the matrix in place and return a list where index = row, value = pivot.
         List<int> indices = new();
 	    for(int row = 0; row < instance.Rows; row++) {
@@ -176,7 +178,7 @@ public static class MatrixOperations {
 		    	if(pivot < indices[cursor - 1]) {
                     // keep our bucket accurate for later use.
                     (indices[cursor], indices[cursor - 1]) = (indices[cursor - 1], indices[cursor]);
-				    instance.SwapRows(cursor, (cursor - 1));
+				    instance.SwapRows(cursor, (cursor - 1), logger);
                     // we log this in SwapRows.
                 } else {
                     break;
