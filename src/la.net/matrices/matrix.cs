@@ -55,6 +55,13 @@ public sealed class Matrix : IMatrix
         }
     }
 
+    public Matrix(Matrix copy) {
+        Rows = copy.Rows;
+        Cols = copy.Cols;
+        _data = new double[Rows, Cols];
+        for(int row = copy.Rows; row > 0; row--) this.AppendRow(copy.GetRow(row));
+    }
+
     // operator overloads.
 
     public double this[int row, int col] {

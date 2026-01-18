@@ -9,12 +9,10 @@ public static class MatrixOperations {
         Matrix RRE = instance.GetReducedRowEchelon(logger);
         foreach(RowOperation op in logger.rowOps) {
             Console.WriteLine($"{op.Kind}, {op.R1}, {op.R2}, {op.Scalar}");
-            if(op.Kind == RowOpKind.Swap) {
-                RRE.SwapRows(op.R1.Value, op.R2);
-            }
-            else if(op.Kind == RowOpKind.Scale) {
-                RRE.ScaleRow(op.R2, op.Scalar);
-            }
+            Console.WriteLine($"{RRE.ToString()}");
+            if(op.Kind == RowOpKind.Swap) RRE.SwapRows(op.R1.Value, op.R2);
+            else if(op.Kind == RowOpKind.Scale) RRE.ScaleRow((op.R2, op.Pivot), scalar: op.Scalar.Value);
+            else if(op.Kind == RowOpKind.AddScaled) RRE.ScaleRow((op.R2, op.Pivot), scalar: op.Scalar.Value);
         }
         return RRE;
     }
@@ -37,7 +35,7 @@ public static class MatrixOperations {
                     var (augmentedValue, targetValue) = (matrix.Get((row + 1), col), matrix.Get(currRow, col));
                     matrix[currRow, col] = (scalar * augmentedValue + targetValue);
                 }
-                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, row, scalar));
+                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, row, scalar, pivot.col));
             } 
         }
         return matrix;
@@ -103,7 +101,7 @@ public static class MatrixOperations {
             for(int comp = (row + 1); comp < rows; comp++) {
                 if(indices[row] == indices[comp]) {
                     matrix.ReduceRow((comp, indices[comp]), (row, indices[row]), logger); // indices is our bucket, so indices[row] gives us the column.
-                    indices[comp] = instance.FindPivot(comp).col; // this returns -1 if you have a free variable.
+                    indices[comp] = matrix.FindPivot(comp).col; // this returns -1 if you have a free variable.
                     // we log these steps inside of ReduceRow().
                 }
             }
@@ -149,14 +147,14 @@ public static class MatrixOperations {
 	    return (row, -1);
     }
 
-    public static void ScaleRow(this Matrix instance, (int row, int pivot) target, MatrixLog? logger = null) {
+    public static void ScaleRow(this Matrix instance, (int row, int pivot) target, MatrixLog? logger = null, double scalar = -1) {
         // scalar needs to be a value such that pivot * scalar = 1.
-        double scalar = 1.0 / instance.Get(target.row, target.pivot);
+        if(scalar == -1) scalar = 1.0 / instance.Get(target.row, target.pivot);
         for(int cursor = target.pivot; cursor < instance.Cols; cursor++) {
             double value = instance.Get(target.row, cursor) * scalar;
             instance.Set(target.row, cursor, value);
         }
-        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, target.row, scalar: scalar));
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.Scale, target.row, scalar: scalar, target.pivot));
     }
 
     // target is the row being augmented, pivot is the row we're basing off of for the elementary operation.
@@ -168,7 +166,7 @@ public static class MatrixOperations {
             double value = instance.Get(target.row, cursor) + (scalar * instance.Get(pivot.row, cursor));
             instance.Set(target.row, cursor, value);
         }
-        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, pivot.row, target.row, scalar));
+        if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, pivot.row, target.row, scalar, pivot.col));
     }
 
     public static List<int> Sort(this Matrix instance, MatrixLog? logger = null) {
