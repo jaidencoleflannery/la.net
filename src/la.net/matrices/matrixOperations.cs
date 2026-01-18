@@ -6,6 +6,14 @@ public static class MatrixOperations {
     public static Matrix GetInverse(this Matrix instance) {
         var logger = new MatrixLog();
         Matrix inverse = instance.GetReducedRowEchelon(logger); // log all steps in RRE process and return identity matrix.
+        // i forgot we have to check if the matrix can actually be inverted... i can just check for pivots... i think.
+        bool isInvertible = true;
+        Console.WriteLine(inverse.ToString());
+        for(int row = 0; row < inverse.Rows; row++) {
+            if(inverse.FindPivot(row).col < 0) isInvertible = false;
+        }
+        if(!isInvertible) throw new ArgumentException("Matrix is not invertible.");
+
         foreach(RowOperation op in logger.rowOps) {
             if(op.Kind == RowOpKind.Swap) inverse.SwapRows(op.R1!.Value, op.R2);
             else if(op.Kind == RowOpKind.Scale) inverse.ScaleRow((op.R2, op.Pivot), scalar: op.Scalar);
