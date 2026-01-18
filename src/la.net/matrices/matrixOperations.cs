@@ -7,6 +7,7 @@ public static class MatrixOperations {
     public static Matrix GetInverse(this Matrix instance) {
         var logger = new MatrixLog();
         Matrix RRE = instance.GetReducedRowEchelon(logger);
+        foreach(RowOperation op in logger.rowOps) Console.WriteLine($"{op.Kind}, {op.R1}, {op.R2}, {op.Scalar}");
         return RRE;
     }
 
@@ -16,23 +17,21 @@ public static class MatrixOperations {
         Matrix matrix = instance.GetRowEchelon(logger);
         for(int row = 0; row < (instance.Rows - 1); row++) {
             (int row, int col) pivot = matrix.FindPivot(row + 1);
-            Console.WriteLine($"instance: \n{matrix.ToString()}pivot found: {pivot.row}, {pivot.col}.\n");
-            if(pivot.col < 0) continue;
-            // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
-            var (rowValue1, rowValue2) = (matrix.Get(row, pivot.col), matrix.Get((row + 1), pivot.col));
-            // at pivot index, row1's value divided by row2's value (negated) causes row1's value at pivot to go to 0. 
-            double scalar = -(rowValue1 / rowValue2);
-            Console.WriteLine($"scalar: {scalar}");
-            for(int col = pivot.col; col < matrix.Cols; col++) {  
-                // iterate through each value in second row and multiply by {scalar}, 
-                // then add that value to row 1
-                var (augmentedValue, targetValue) = (matrix.Get((row + 1), col), matrix.Get(row, col));
-                Console.WriteLine($"value set: ({scalar} * {rowValue2} + {targetValue})");
-                matrix[row, col] = (scalar * augmentedValue + targetValue);
-                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, row, scalar));
+            if(pivot.col < 0) continue; 
+            for(int currRow = row; currRow >= 0; currRow--) {
+                // scalar needs to be a value such that (second row's pivot * scalar) + first row's pivot = 0.
+                var (rowValue1, rowValue2) = (matrix.Get(currRow, pivot.col), matrix.Get((row + 1), pivot.col));
+                // at pivot index, row1's value divided by row2's value (negated) causes row1's value at pivot to go to 0. 
+                double scalar = -(rowValue1 / rowValue2);
+                for(int col = pivot.col; col < matrix.Cols; col++) {  
+                    // iterate through each value in second row and multiply by {scalar}, 
+                    // then add that value to row 1
+                    var (augmentedValue, targetValue) = (matrix.Get((row + 1), col), matrix.Get(currRow, col));
+                    matrix[currRow, col] = (scalar * augmentedValue + targetValue);
+                    if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, currRow, scalar));
+                }
             }
         }
-        //matrix.Sort(logger);
         return matrix;
     }
 
