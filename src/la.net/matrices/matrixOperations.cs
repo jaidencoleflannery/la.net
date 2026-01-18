@@ -32,7 +32,7 @@ public static class MatrixOperations {
                     var (augmentedValue, targetValue) = (matrix.Get((row + 1), col), matrix.Get(currRow, col));
                     matrix[currRow, col] = (scalar * augmentedValue + targetValue);
                 }
-                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, row, scalar, pivot.col));
+                if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, row + 1, currRow, scalar, pivot.col));
             } 
         }
         return matrix;
