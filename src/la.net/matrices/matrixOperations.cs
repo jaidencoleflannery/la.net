@@ -6,23 +6,16 @@ public static class MatrixOperations {
     public static Matrix GetInverse(this Matrix instance) { 
         var logger = new MatrixLog();
         Matrix inverse = instance.GetReducedRowEchelon(logger); // log all steps in RRE process and return identity matrix. 
-        if(!IsInvertible(inverse)) throw new ArgumentException("Matrix is not invertible.");
-
+        if(!IsInvertible(inverse)) throw new ArgumentException("Matrix is not invertible.");    // doing this after reduction allows us to quickly check for empty rows.
+        // IsInvertible should probably just be checking for the determinant - refactor later.
+        
         foreach(RowOperation op in logger.rowOps) {
             if(op.Kind == RowOpKind.Swap) inverse.SwapRows(op.R1!.Value, op.R2);
             else if(op.Kind == RowOpKind.Scale) inverse.ScaleRow((op.R2, op.Pivot), scalar: op.Scalar);
             else if(op.Kind == RowOpKind.AddScaled) inverse.AddScaledRow(op.R1!.Value, op.R2, scalar: op.Scalar!.Value);
         }
         return inverse;
-    }
-
-    public static bool IsInvertible(Matrix instance) { 
-        if(instance.Cols != instance.Rows) return false;
-        for(int row = 0; row < instance.Rows; row++) {
-            if(instance.FindPivot(row).col < 0) return false;
-        }
-        return true;
-    }
+    } 
 
     public static Matrix GetReducedRowEchelon(this Matrix instance, MatrixLog? logger = null) {
         // 1. reduce to row echelon,
@@ -184,6 +177,14 @@ public static class MatrixOperations {
             instance.Set(target.row, cursor, value);
         }
         if(logger is not null) logger.LogStep(new RowOperation(RowOpKind.AddScaled, pivot.row, target.row, scalar, pivot.col));
+    }
+
+    public static bool IsInvertible(Matrix instance) { 
+        if(instance.Cols != instance.Rows) return false;
+        for(int row = 0; row < instance.Rows; row++) {
+            if(instance.FindPivot(row).col < 0) return false;
+        }
+        return true;
     }
 
     public static List<int> Sort(this Matrix instance, MatrixLog? logger = null) {

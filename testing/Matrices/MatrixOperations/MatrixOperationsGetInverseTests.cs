@@ -29,7 +29,7 @@ public class MatrixOperationsGetInverseTests {
 
 
     [Fact]
-    public void GetInverse_DoesNotReturnInverseOfMatrix_Failure() {
+    public void GetInverse_ThrowsOnNonInvertibleMatrix_Failure() {
         var data = new double[,] {
                 {1, 0, 0}, 
                 {0, 8, 0},
