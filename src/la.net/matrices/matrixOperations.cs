@@ -3,16 +3,10 @@ using Matrices.Logging;
 namespace Matrices;
 public static class MatrixOperations { 
 
-    public static Matrix GetInverse(this Matrix instance) {
+    public static Matrix GetInverse(this Matrix instance) { 
         var logger = new MatrixLog();
-        Matrix inverse = instance.GetReducedRowEchelon(logger); // log all steps in RRE process and return identity matrix.
-        // i forgot we have to check if the matrix can actually be inverted... i can just check for pivots... i think.
-        bool isInvertible = true;
-        Console.WriteLine(inverse.ToString());
-        for(int row = 0; row < inverse.Rows; row++) {
-            if(inverse.FindPivot(row).col < 0) isInvertible = false;
-        }
-        if(!isInvertible) throw new ArgumentException("Matrix is not invertible.");
+        Matrix inverse = instance.GetReducedRowEchelon(logger); // log all steps in RRE process and return identity matrix. 
+        if(!IsInvertible(inverse)) throw new ArgumentException("Matrix is not invertible.");
 
         foreach(RowOperation op in logger.rowOps) {
             if(op.Kind == RowOpKind.Swap) inverse.SwapRows(op.R1!.Value, op.R2);
@@ -20,6 +14,14 @@ public static class MatrixOperations {
             else if(op.Kind == RowOpKind.AddScaled) inverse.AddScaledRow(op.R1!.Value, op.R2, scalar: op.Scalar!.Value);
         }
         return inverse;
+    }
+
+    public static bool IsInvertible(Matrix instance) { 
+        if(instance.Cols != instance.Rows) return false;
+        for(int row = 0; row < instance.Rows; row++) {
+            if(instance.FindPivot(row).col < 0) return false;
+        }
+        return true;
     }
 
     public static Matrix GetReducedRowEchelon(this Matrix instance, MatrixLog? logger = null) {
