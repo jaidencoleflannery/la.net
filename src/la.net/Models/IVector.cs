@@ -1,5 +1,10 @@
 namespace Vectors;
 public interface IVector {
+
+    /// <summary>
+    /// returns the dimension of the vector.
+    /// </summary>
+    int Dimension { get; }
     
     /// <summary>
     /// returns the length of the vector.
@@ -7,7 +12,7 @@ public interface IVector {
     int Length { get; }
 
 	/// <summary>
-	/// gets the x and y value of the vector.
+	/// gets the specified base scalar from the vector instance.
     /// </summary>
 	double this[int index] { get; set; }
 
