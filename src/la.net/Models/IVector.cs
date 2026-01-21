@@ -54,7 +54,7 @@ public interface IVector {
     /// <summary>
 	/// find the dot product of the vector instance and vector {a}. 
 	/// </summary>
-    Double Dol(IVector a);
+    Double Dot(IVector a);
 
     /// <summary>
 	/// find if two vectors are approximately comparable by the specified threshold.
