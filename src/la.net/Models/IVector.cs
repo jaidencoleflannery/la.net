@@ -62,7 +62,8 @@ public interface IVector {
     Double Dot(IVector a);
 
     /// <summary>
-	/// find if two vectors are approximately comparable by the specified threshold.
+	/// find if two vectors are approximately comparable by the specified threshold 
+    /// (difference between vectors is greater than or equal to threshold).
     /// </summary>
     bool EqualsApprox(IVector a, double threshold);
 }
