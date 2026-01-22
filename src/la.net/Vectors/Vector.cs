@@ -11,7 +11,7 @@ public sealed class Vector : IVector {
     
     // accessors
 
-    double Length => Math.Sqrt(_data.Sum(num => num * num)); // the "L2" length can be found by taking the square root of the sum of all squared scalars
+    public double Norm => Math.Sqrt(_data.Sum(num => num * num)); // the "L2" length can be found by taking the square root of the sum of all squared scalars
  
     // constructors
 
@@ -29,16 +29,16 @@ public sealed class Vector : IVector {
     public double this[int index] =>
         _data[index];
 
-    public static Vector operator +(Vector a, Vector b) =>
+    public static IVector operator +(Vector a, IVector b) =>
         Add(a, b);
 
-    public static Vector operator -(Vector a, Vector b) =>
+    public static IVector operator -(Vector a, IVector b) =>
         Subtract(a, b);
 
-    public static Vector operator *(Vector a, Vector b) =>
+    public static IVector operator *(Vector a, IVector b) =>
         Scale(a, b);
 
-    public static Vector operator *(Vector a, double scalar) =>
+    public static IVector operator *(Vector a, double scalar) =>
         Scale(a, scalar);
 
     // methods
@@ -49,53 +49,53 @@ public sealed class Vector : IVector {
     public Span<double> AsMutableSpan() =>
         new(_data);
 
-    public Vector Clone(IVector vector) =>
-        new Vector(vector.Dimension, vector.AsSpan());
+    public IVector Clone() =>
+        new Vector(this.Dimension, this.AsSpan());
 
-    public IEnumerator GetEnumerator() {
+    public IEnumerator<double> GetEnumerator() {
         for(int cursor = 0; cursor < _data.Length; cursor++) yield return _data[cursor];
     }
 
-    public IVector Slice(int start, int numValues, IVector vector) =>
-        new Vector(vector.Dimension, vector.AsSpan().Slice(start, numValues));
+    public IVector Slice(int start, int numValues) =>
+        new Vector(this.Dimension, this.AsSpan().Slice(start, numValues));
 
-    public static Vector Add(this IVector a, IVector b) {
+    public IVector Add(this Vector a, IVector b) {
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] + b[cursor];
-        return new Vector(a.Dimension, vector);
+        return new Vector(this.Dimension, vector);
     }
 
-    public static Vector Subtract(this IVector a, IVector b) {
-        double[] vector = new double[a.Dimension];
-        for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] - b[cursor];
-        return new Vector(a.Dimension, vector);
+    public IVector Subtract(IVector a) {
+        double[] vector = new double[this.Dimension];
+        for(int cursor = 0; cursor < this.Dimension; cursor++) vector[cursor] = this[cursor] - a[cursor];
+        return new Vector(this.Dimension, vector);
     }
 
-    public static Vector Scale(this IVector a, IVector b) {
-        double[] vector = new double[a.Dimension];
-        for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * b[cursor];
-        return new Vector(a.Dimension, vector);
+    public IVector Scale(IVector a) {
+        double[] vector = new double[this.Dimension];
+        for(int cursor = 0; cursor < this.Dimension; cursor++) vector[cursor] = this[cursor] * a[cursor];
+        return new Vector(this.Dimension, vector);
     }
 
-    public static Vector Scale(this IVector a, double b) {
-        double[] vector = new double[a.Dimension];
-        for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * b;
-        return new Vector(a.Dimension, vector);
+    public IVector Scale(double scalar) {
+        double[] vector = new double[this.Dimension];
+        for(int cursor = 0; cursor < this.Dimension; cursor++) vector[cursor] = this[cursor] * scalar;
+        return new Vector(this.Dimension, vector);
     }
 
-    public static double Dot(this Vector a, Vector b) {
-        if(a.Dimension != b.Dimension) throw new ArgumentException($"Cannot find the dot product of matrices with differing dimensions.");
+    public double Dot(IVector a) {
+        if(this.Dimension != a.Dimension) throw new ArgumentException($"Cannot find the dot product of matrices with differing dimensions.");
         double dotProduct = 0.0;
-        for(int cursor = 0; cursor < a.Dimension; cursor++) {
-            dotProduct += (a[cursor] * b[cursor]);
+        for(int cursor = 0; cursor < this.Dimension; cursor++) {
+            dotProduct += (this[cursor] * a[cursor]);
         }
         return dotProduct;
     }
 
-    public bool EqualsApprox(Vector a, Vector b, double threshold) {
-        if(a.Dimension != b.Dimension) throw new ArgumentException($"Cannot approximately compare matrices with differing dimensions.");
-        for(int cursor = 0; cursor < a.Dimension; cursor++) {
-            if(a[cursor] - b[cursor] >= threshold) return false;
+    public bool EqualsApprox(IVector a, double threshold) {
+        if(this.Dimension != a.Dimension) throw new ArgumentException($"Cannot approximately compare matrices with differing dimensions.");
+        for(int cursor = 0; cursor < this.Dimension; cursor++) {
+            if(this[cursor] - a[cursor] >= threshold) return false;
         }
         return true;
     }

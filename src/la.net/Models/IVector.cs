@@ -9,28 +9,18 @@ public interface IVector {
     /// <summary>
     /// returns the length of the vector.
     /// </summary>
-    int Length { get; }
+    double Norm { get; }
 
 	/// <summary>
 	/// gets the specified base scalar from the vector instance.
     /// </summary>
-	double this[int index] { get; set; }
-
-	/// <summary>
-	/// get a readonly span of data for the vector instance.
-    /// </summary>
-    ReadOnlySpan<double> AsSpan();
-
+	double this[int index] { get; }
+	
     /// <summary>
 	/// return a clone of the vector instance.
     /// </summary>
-    IVector Clone(IVector vector);
-
-    /// <summary>
-	/// get a mutable span of data for the vector instance.
-    /// </summary>
-    Span<double> AsMutableSpan();
-
+    IVector Clone();
+ 
 	/// <summary>
 	/// get an enumerable of the vector instance.
     /// </summary>
@@ -39,7 +29,7 @@ public interface IVector {
 	/// <summary>
 	/// decrease the dimension of the vector instance. 
 	/// </summary>
-    IVector Slice(int start, int numValues, IVector vector);
+    IVector Slice(int start, int length);
 
     /// <summary>
 	/// add vector {a} to the vector instance. 
@@ -57,13 +47,18 @@ public interface IVector {
     IVector Scale(IVector a);
 
     /// <summary>
+	/// scale the vector instance by a scalar. 
+	/// </summary>
+    IVector Scale(double scalar);
+
+    /// <summary>
 	/// find the dot product of the vector instance and vector {a}. 
 	/// </summary>
-    Double Dot(IVector a);
+    double Dot(IVector a);
 
     /// <summary>
 	/// find if two vectors are approximately comparable by the specified threshold 
     /// (difference between vectors is greater than or equal to threshold).
     /// </summary>
-    bool EqualsApprox(IVector a, double threshold);
+    bool EqualsApprox(IVector b, double threshold);
 }
