@@ -1,18 +1,9 @@
-using System.Collections;
+using System.Text;
 
 namespace Vectors;
 
 public sealed class Vector : IVector {
-    // attributes
 
-    public int Dimension { get; }
-
-    private double[] _data; // a vector is a set of scalars (for each base vector that equates to the result)
-    
-    // accessors
-
-    public double Norm => Math.Sqrt(_data.Sum(num => num * num)); // the "L2" length can be found by taking the square root of the sum of all squared scalars
- 
     // constructors
 
     public Vector(int dimension, ReadOnlySpan<double> scalars) {
@@ -20,9 +11,22 @@ public sealed class Vector : IVector {
         if(scalars.Length != dimension) throw new ArgumentException($"Vector must have less {nameof(scalars)} than {nameof(dimension)}.");
         Dimension = dimension;
         _data = scalars.ToArray();  // this is copying, so if typeof(scalars) == double[] so our data cannot be tampered with
+        _norm = Math.Sqrt(_data.Sum(num => num * num)); // the "L2" length can be found by taking the square root of the sum of all squared scalars 
     }
 
     public Vector(int dimension, double[] scalars) : this(dimension, scalars.AsSpan()) { }
+
+    // attributes
+
+    private double _norm { get; set; }
+
+    public int Dimension { get; }
+
+    private double[] _data; // a vector is a set of scalars (for each base vector that equates to the result)
+    
+    // accessors
+
+    public double Norm => _norm;
 
     // operators
 
@@ -59,28 +63,28 @@ public sealed class Vector : IVector {
     public IVector Slice(int start, int numValues) =>
         new Vector(this.Dimension, this.AsSpan().Slice(start, numValues));
 
-    public IVector Add(this Vector a, IVector b) {
+    public static IVector Add(IVector a, IVector b) {
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] + b[cursor];
-        return new Vector(this.Dimension, vector);
+        return new Vector(a.Dimension, vector);
     }
 
-    public IVector Subtract(IVector a) {
-        double[] vector = new double[this.Dimension];
-        for(int cursor = 0; cursor < this.Dimension; cursor++) vector[cursor] = this[cursor] - a[cursor];
-        return new Vector(this.Dimension, vector);
+    public static IVector Subtract(IVector a, IVector b) {
+        double[] vector = new double[a.Dimension];
+        for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] - b[cursor];
+        return new Vector(a.Dimension, vector);
     }
 
-    public IVector Scale(IVector a) {
-        double[] vector = new double[this.Dimension];
-        for(int cursor = 0; cursor < this.Dimension; cursor++) vector[cursor] = this[cursor] * a[cursor];
-        return new Vector(this.Dimension, vector);
+    public static IVector Scale(IVector a, IVector b) {
+        double[] vector = new double[a.Dimension];
+        for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * b[cursor];
+        return new Vector(a.Dimension, vector);
     }
 
-    public IVector Scale(double scalar) {
-        double[] vector = new double[this.Dimension];
-        for(int cursor = 0; cursor < this.Dimension; cursor++) vector[cursor] = this[cursor] * scalar;
-        return new Vector(this.Dimension, vector);
+    public static IVector Scale(IVector a, double scalar) {
+        double[] vector = new double[a.Dimension];
+        for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * scalar;
+        return new Vector(a.Dimension, vector);
     }
 
     public double Dot(IVector a) {
@@ -98,5 +102,29 @@ public sealed class Vector : IVector {
             if(this[cursor] - a[cursor] >= threshold) return false;
         }
         return true;
+    }
+
+    public override string ToString() {
+        var sb = new StringBuilder();
+        for (int scalar = 0; scalar < Dimension; scalar++)
+        {
+            sb.Append("| ");
+            sb.Append($"{_data[scalar]:F3} ");
+            sb.Append("|");
+            sb.AppendLine("");
+        }
+        return sb.ToString();
+    }
+
+    public string ToStringRounded() {
+        var sb = new StringBuilder();
+        for (int scalar = 0; scalar < Dimension; scalar++)
+        {
+            sb.Append("| ");
+            sb.Append($"{_data[scalar]:F0} ");
+            sb.Append("|");
+            sb.AppendLine("");
+        }
+        return sb.ToString();
     }
 }

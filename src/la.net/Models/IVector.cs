@@ -30,27 +30,7 @@ public interface IVector {
 	/// decrease the dimension of the vector instance. 
 	/// </summary>
     IVector Slice(int start, int length);
-
-    /// <summary>
-	/// add vector {a} to the vector instance. 
-	/// </summary>
-    IVector Add(IVector a);
-
-    /// <summary>
-	/// subtract from the vector instance by vector {a}. 
-	/// </summary>
-    IVector Subtract(IVector a);
-
-    /// <summary>
-	/// scale the vector instance by vector {a}. 
-	/// </summary>
-    IVector Scale(IVector a);
-
-    /// <summary>
-	/// scale the vector instance by a scalar. 
-	/// </summary>
-    IVector Scale(double scalar);
-
+    
     /// <summary>
 	/// find the dot product of the vector instance and vector {a}. 
 	/// </summary>

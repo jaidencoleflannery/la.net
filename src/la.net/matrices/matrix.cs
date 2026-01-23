@@ -257,4 +257,17 @@ public sealed class Matrix : IMatrix
         }
         return sb.ToString();
     }
+
+    public string ToStringRounded()
+    {
+        var sb = new StringBuilder();
+        for (int row = 0; row < Rows; row++)
+        {
+            sb.Append("| ");
+            for (int col = 0; col < Cols; col++) sb.Append($"{_data[row, col]:F0} ");
+            sb.Append("|");
+            sb.AppendLine("");
+        }
+        return sb.ToString();
+    }
 }
