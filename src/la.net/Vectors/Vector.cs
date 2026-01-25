@@ -6,23 +6,28 @@ public sealed class Vector : IVector {
 
     // constructors
 
-    public Vector(int dimension, ReadOnlySpan<double> scalars) {
-        if(scalars.Length == 0) throw new ArgumentException("Vector cannot be empty.");
-        if(scalars.Length != dimension) throw new ArgumentException($"Vector must have less {nameof(scalars)} than {nameof(dimension)}.");
+    public Vector(int dimension) {  
+        ReadOnlySpan<double> scalars = new double[dimension];
         Dimension = dimension;
-        _data = scalars.ToArray();  // this is copying, so if typeof(scalars) == double[] so our data cannot be tampered with
+        _data = scalars.ToArray();  // this is copying, if typeof(scalars) == double[] (so our data cannot be tampered with)
         _norm = Math.Sqrt(_data.Sum(num => num * num)); // the "L2" length can be found by taking the square root of the sum of all squared scalars 
     }
 
-    public Vector(int dimension, double[] scalars) : this(dimension, scalars.AsSpan()) { }
+    public Vector(ReadOnlySpan<double> scalars) {  
+        Dimension = scalars.Length;
+        _data = scalars.ToArray();
+        _norm = Math.Sqrt(_data.Sum(num => num * num));
+    }
+
+    public Vector(double[] scalars) : this(scalars.AsSpan()) { }
 
     // attributes
-
-    private double _norm { get; set; }
-
+    
     public int Dimension { get; }
 
-    private double[] _data; // a vector is a set of scalars (for each base vector that equates to the result)
+    private double _norm { get; set; } 
+
+    private double[] _data { get; set; } // a vector is a set of scalars (for each base vector that equates to the result)
     
     // accessors
 
@@ -30,8 +35,10 @@ public sealed class Vector : IVector {
 
     // operators
 
-    public double this[int index] =>
-        _data[index];
+    public double this[int index] {
+        get => _data[index];
+        set => _data[index] = value;
+    }
 
     public static IVector operator +(Vector a, IVector b) =>
         Add(a, b);
@@ -54,37 +61,37 @@ public sealed class Vector : IVector {
         new(_data);
 
     public IVector Clone() =>
-        new Vector(this.Dimension, this.AsSpan());
+        new Vector(this.AsSpan());
 
     public IEnumerator<double> GetEnumerator() {
         for(int cursor = 0; cursor < _data.Length; cursor++) yield return _data[cursor];
     }
 
     public IVector Slice(int start, int numValues) =>
-        new Vector(this.Dimension, this.AsSpan().Slice(start, numValues));
+        new Vector(this.AsSpan().Slice(start, numValues));
 
     public static IVector Add(IVector a, IVector b) {
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] + b[cursor];
-        return new Vector(a.Dimension, vector);
+        return new Vector(vector);
     }
 
     public static IVector Subtract(IVector a, IVector b) {
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] - b[cursor];
-        return new Vector(a.Dimension, vector);
+        return new Vector(vector);
     }
 
     public static IVector Scale(IVector a, IVector b) {
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * b[cursor];
-        return new Vector(a.Dimension, vector);
+        return new Vector(vector);
     }
 
     public static IVector Scale(IVector a, double scalar) {
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * scalar;
-        return new Vector(a.Dimension, vector);
+        return new Vector(vector);
     }
 
     public double Dot(IVector a) {
@@ -102,6 +109,13 @@ public sealed class Vector : IVector {
             if(this[cursor] - a[cursor] >= threshold) return false;
         }
         return true;
+    }
+
+    public IVector GetUnit() {
+        Vector v = new Vector(this.Dimension);
+        for(int row = 0; row < this.Dimension; row++)
+            v[row] = this[row] / this.Norm;
+        return v;
     }
 
     public override string ToString() {
