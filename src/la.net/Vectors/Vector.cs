@@ -1,4 +1,5 @@
 using System.Text;
+using Matrices;
 
 namespace Vectors;
 
@@ -46,11 +47,11 @@ public sealed class Vector : IVector {
     public static IVector operator -(Vector a, IVector b) =>
         Subtract(a, b);
 
-    public static IVector operator *(Vector a, IVector b) =>
-        Scale(a, b);
-
     public static IVector operator *(Vector a, double scalar) =>
         Scale(a, scalar);
+
+    public static IVector operator *(Vector a, Matrix m) =>
+        Scale(a, m);
 
     // methods
 
@@ -87,6 +88,17 @@ public sealed class Vector : IVector {
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * scalar;
         return new Vector(vector);
     } 
+
+    public static IVector Scale(IVector a, Matrix matrix) {
+        if(matrix.Cols != a.Dimension) throw new ArgumentException($"Cannot multiply a vector by a matrix unless the vectors number of rows matches the matrix's number of columns.");
+        double[] vector = new double[matrix.Rows]; // after multiplication, the resulting vector of a mxn matrix will be m dimensions.
+        for(int row = 0; row < matrix.Rows; row++) {
+            for(int col = 0; col < matrix.Cols; col++) {
+                vector[row] += a[row] * matrix[row, col];
+            }
+        }
+        return new Vector(vector);
+    }
 
     public static double Dot(IVector a, IVector b) {
         if(a.Dimension != b.Dimension) throw new ArgumentException($"Cannot find the dot product of matrices with differing dimensions.");
