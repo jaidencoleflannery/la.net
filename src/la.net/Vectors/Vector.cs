@@ -4,6 +4,14 @@ namespace Vectors;
 
 public sealed class Vector : IVector {
 
+    // attributes
+    
+    public int Dimension { get; }
+
+    private double _norm { get; set; } 
+
+    private double[] _data { get; set; } // a vector is a set of scalars (for each base vector that sums to the result)
+
     // constructors
 
     public Vector(int dimension) {  
@@ -19,15 +27,7 @@ public sealed class Vector : IVector {
         _norm = Math.Sqrt(_data.Sum(num => num * num));
     }
 
-    public Vector(double[] scalars) : this(scalars.AsSpan()) { }
-
-    // attributes
-    
-    public int Dimension { get; }
-
-    private double _norm { get; set; } 
-
-    private double[] _data { get; set; } // a vector is a set of scalars (for each base vector that equates to the result)
+    public Vector(double[] scalars) : this(scalars.AsSpan()) { } 
     
     // accessors
 
@@ -80,25 +80,19 @@ public sealed class Vector : IVector {
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] - b[cursor];
         return new Vector(vector);
-    }
-
-    public static IVector Scale(IVector a, IVector b) {
-        double[] vector = new double[a.Dimension];
-        for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * b[cursor];
-        return new Vector(vector);
-    }
+    } 
 
     public static IVector Scale(IVector a, double scalar) {
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * scalar;
         return new Vector(vector);
-    }
+    } 
 
-    public double Dot(IVector a) {
-        if(this.Dimension != a.Dimension) throw new ArgumentException($"Cannot find the dot product of matrices with differing dimensions.");
+    public static double Dot(IVector a, IVector b) {
+        if(a.Dimension != b.Dimension) throw new ArgumentException($"Cannot find the dot product of matrices with differing dimensions.");
         double dotProduct = 0.0;
-        for(int cursor = 0; cursor < this.Dimension; cursor++) {
-            dotProduct += (this[cursor] * a[cursor]);
+        for(int cursor = 0; cursor < a.Dimension; cursor++) {
+            dotProduct += (a[cursor] * b[cursor]);
         }
         return dotProduct;
     }
@@ -120,8 +114,7 @@ public sealed class Vector : IVector {
 
     public override string ToString() {
         var sb = new StringBuilder();
-        for (int scalar = 0; scalar < Dimension; scalar++)
-        {
+        for (int scalar = 0; scalar < Dimension; scalar++) {
             sb.Append("| ");
             sb.Append($"{_data[scalar]:F3} ");
             sb.Append("|");
@@ -132,8 +125,7 @@ public sealed class Vector : IVector {
 
     public string ToStringRounded() {
         var sb = new StringBuilder();
-        for (int scalar = 0; scalar < Dimension; scalar++)
-        {
+        for (int scalar = 0; scalar < Dimension; scalar++) {
             sb.Append("| ");
             sb.Append($"{_data[scalar]:F0} ");
             sb.Append("|");
