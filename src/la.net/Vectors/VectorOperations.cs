@@ -43,4 +43,7 @@ public static class VectorOperations {
         return dotProduct;
     }
 
+    public static double Cos(Vector a, Vector b) =>
+        Dot(a, b) / (a.Norm * b.Norm);
+
 }
