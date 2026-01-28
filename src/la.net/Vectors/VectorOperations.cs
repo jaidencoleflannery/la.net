@@ -46,4 +46,7 @@ public static class VectorOperations {
     public static double Cos(Vector a, Vector b) =>
         Dot(a, b) / (a.Norm * b.Norm);
 
+    public static double Angle(Vector a, Vector b) =>
+        Math.Acos(Cos(a, b)) * (180 / Math.PI);
+
 }
