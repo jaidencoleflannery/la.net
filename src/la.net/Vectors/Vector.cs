@@ -4,7 +4,7 @@ using static Vectors.VectorOperations;
 
 namespace Vectors;
 
-public sealed class Vector : IVector {
+public sealed class Vector {
 
     // attributes
     
@@ -42,16 +42,16 @@ public sealed class Vector : IVector {
         set => _data[index] = value;
     }
 
-    public static IVector operator +(Vector a, IVector b) =>
+    public static Vector operator +(Vector a, Vector b) =>
         Add(a, b);
 
-    public static IVector operator -(Vector a, IVector b) =>
+    public static Vector operator -(Vector a, Vector b) =>
         Subtract(a, b);
 
-    public static IVector operator *(Vector a, double scalar) =>
+    public static Vector operator *(Vector a, double scalar) =>
         Scale(a, scalar);
 
-    public static IVector operator *(Vector a, Matrix m) =>
+    public static Vector operator *(Vector a, Matrix m) =>
         Scale(a, m);
 
     // methods
@@ -62,17 +62,17 @@ public sealed class Vector : IVector {
     public Span<double> AsMutableSpan() =>
         new(_data);
 
-    public IVector Clone() =>
+    public Vector Clone() =>
         new Vector(this.AsSpan());
 
     public IEnumerator<double> GetEnumerator() {
         for(int cursor = 0; cursor < _data.Length; cursor++) yield return _data[cursor];
     }
 
-    public IVector Slice(int start, int numValues) =>
+    public Vector Slice(int start, int numValues) =>
         new Vector(this.AsSpan().Slice(start, numValues));
 
-    public bool EqualsApprox(IVector a, double threshold) {
+    public bool EqualsApprox(Vector a, double threshold) {
         if(this.Dimension != a.Dimension) throw new ArgumentException($"Cannot approximately compare matrices with differing dimensions.");
         for(int cursor = 0; cursor < this.Dimension; cursor++) {
             if(this[cursor] - a[cursor] >= threshold) return false;
@@ -80,7 +80,7 @@ public sealed class Vector : IVector {
         return true;
     }
 
-    public IVector GetUnit() {
+    public Vector GetUnit() {
         Vector v = new Vector(this.Dimension);
         for(int row = 0; row < this.Dimension; row++)
             v[row] = this[row] / this.Norm;

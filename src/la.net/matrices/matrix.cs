@@ -1,7 +1,7 @@
 using System.Text;
 
 namespace Matrices;
-public sealed class Matrix : IMatrix
+public sealed class Matrix
 {
     // properties.
     
