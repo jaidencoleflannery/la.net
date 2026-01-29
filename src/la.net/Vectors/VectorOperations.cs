@@ -4,6 +4,7 @@ namespace Vectors;
 public static class VectorOperations {
 
     public static Vector Add(Vector a, Vector b) {
+        if(a is null || b is null) throw new ArgumentNullException("Cannot add a null vector.");
         if(a.Dimension != b.Dimension) throw new ArgumentException("Vector dimensions must match for vector addition.");
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] + b[cursor];
@@ -11,6 +12,7 @@ public static class VectorOperations {
     }
 
     public static Vector Subtract(Vector a, Vector b) {
+        if(a is null || b is null) throw new ArgumentNullException("Cannot subtract a null vector.");
         if(a.Dimension != b.Dimension) throw new ArgumentException("Vector dimensions must match for vector subtraction.");
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] - b[cursor];
@@ -18,12 +20,14 @@ public static class VectorOperations {
     } 
 
     public static Vector Scale(Vector a, double scalar) {
+        if(a is null) throw new ArgumentNullException("Cannot subtract a null vector.");
         double[] vector = new double[a.Dimension];
         for(int cursor = 0; cursor < a.Dimension; cursor++) vector[cursor] = a[cursor] * scalar;
         return new Vector(vector);
     } 
 
     public static Vector Scale(Vector a, Matrix matrix) {
+        if(a is null || matrix is null) throw new ArgumentNullException("Cannot scale a null vector or matrix.");
         if(matrix.Cols != a.Dimension) throw new ArgumentException($"Cannot multiply a vector by a matrix unless the vectors number of rows matches the matrix's number of columns.");
         double[] vector = new double[matrix.Rows]; // after multiplication, the resulting vector of a mxn matrix will be m dimensions.
         for(int row = 0; row < matrix.Rows; row++) {
@@ -34,7 +38,26 @@ public static class VectorOperations {
         return new Vector(vector);
     }
 
+    public static bool IsEqual(Vector a, Vector b) {
+        if (a is null || b is null) throw new ArgumentNullException();
+        if(a.Dimension != b.Dimension) return false;
+
+        for(int cursor = 0; cursor < a.Dimension; cursor++) 
+                if(a[cursor] != b[cursor]) return false;
+        return true;
+    }
+
+    public static bool IsNotEqual(Vector a, Vector b) {
+        if (a is null || b is null) throw new ArgumentNullException();
+        if(a.Dimension != b.Dimension) return false;
+
+        for(int cursor = 0; cursor < a.Dimension; cursor++) 
+                if(a[cursor] != b[cursor]) return true;
+        return false;
+    }
+
     public static double Dot(Vector a, Vector b) {
+        if(a is null || b is null) throw new ArgumentNullException("Cannot find the dot product of a null vector.");
         if(a.Dimension != b.Dimension) throw new ArgumentException($"Cannot find the dot product of matrices with differing dimensions.");
         double dotProduct = 0.0;
         for(int cursor = 0; cursor < a.Dimension; cursor++) {

@@ -8,7 +8,7 @@ public sealed class Vector {
 
     // attributes
     
-    public int Dimension { get; }
+    private int _dimension { get; }
 
     private double _norm { get; set; } 
 
@@ -17,14 +17,15 @@ public sealed class Vector {
     // constructors
 
     public Vector(int dimension) {  
+        if(dimension <= 0) throw new ArgumentException("A vector must have at least 1 dimension.");
         ReadOnlySpan<double> scalars = new double[dimension];
-        Dimension = dimension;
+        _dimension = dimension;
         _data = scalars.ToArray();  // this is copying, if typeof(scalars) == double[] (so our data cannot be tampered with)
         _norm = Math.Sqrt(_data.Sum(num => num * num)); // the "L2" length can be found by taking the square root of the sum of all squared scalars 
     }
 
     public Vector(ReadOnlySpan<double> scalars) {  
-        Dimension = scalars.Length;
+        _dimension = scalars.Length;
         _data = scalars.ToArray();
         _norm = Math.Sqrt(_data.Sum(num => num * num));
     }
@@ -32,6 +33,8 @@ public sealed class Vector {
     public Vector(double[] scalars) : this(scalars.AsSpan()) { } 
     
     // accessors
+
+    public int Dimension => _dimension;
 
     public double Norm => _norm;
 
@@ -54,26 +57,12 @@ public sealed class Vector {
     public static Vector operator *(Vector a, Matrix m) =>
         Scale(a, m); 
 
-    public static bool operator ==(Vector a, Vector b) {
-        if (a is null || b is null) throw new ArgumentNullException();
-        if(a.Dimension != b.Dimension) return false;
-
-        for(int cursor = 0; cursor < a.Dimension; cursor++) {
-                if(a[cursor] != b[cursor]) return false;
-        }
-        return true;
-    }
-
-    public static bool operator !=(Vector a, Vector b) {
-        if (a is null || b is null) throw new ArgumentNullException();
-        if(a.Dimension != b.Dimension) return false;
-
-        for(int cursor = 0; cursor < a.Dimension; cursor++) {
-                if(a[cursor] != b[cursor]) return true;
-        }
-        return false;
-    }
-
+    public static bool operator ==(Vector a, Vector b) =>
+        IsEqual(a, b);
+ 
+    public static bool operator !=(Vector a, Vector b) =>
+        IsNotEqual(a, b);
+ 
     public override bool Equals(object? obj) => obj is Vector other && this == other;
 
 
