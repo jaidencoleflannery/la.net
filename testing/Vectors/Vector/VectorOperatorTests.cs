@@ -96,8 +96,6 @@ public class VectorOperatorTests
     public void InequalityOperator_DataMatches_Fail() {
         var data = new double[] { 0, 4, 8 };
         Vector v1 = new Vector(data);
-
-        data[2] = 4;
         Vector v2 = new Vector(data);
 
         Assert.False(v1 != v2);
@@ -274,9 +272,10 @@ public class VectorOperatorTests
     [Fact]
     public void ScaleOperator_ScalingVector_Success() {
         var data = new double[] { 0, 4, 8 };
-        Vector v1 = new Vector(data);         
+        Vector v1 = new Vector(data);
 
-        var result = new Vector(new double[] { 0, 8, 16 });
+        data = new double[] { 0, 8, 16 };
+        var result = new Vector(data);
 
         Assert.Equal(result, (v1 * 2));
     } 
