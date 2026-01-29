@@ -1,4 +1,6 @@
-namespace Vector.Tests;
+using Vectors;
+
+namespace Vectors.Tests;
 
 public class VectorOperatorTests
 {
@@ -13,7 +15,7 @@ public class VectorOperatorTests
         Vector v1 = new Vector(data);
         Vector v2 = new Vector(data);
 
-        Assert.True(m1 == m2);
+        Assert.True(v1 == v2);
     }
 
     [Fact]
@@ -75,7 +77,7 @@ public class VectorOperatorTests
         data[2] = 4;
         Vector v2 = new Vector(data);
 
-        Assert.False(m1 == m2);
+        Assert.False(v1 == v2);
     }
 
     [Fact]
@@ -104,9 +106,9 @@ public class VectorOperatorTests
     [Fact]
     public void InequalityOperator_Reflection_Fail() {
         var data = new double[] { 0, 4, 8 };
-        Vector v1 = new Vector(data);
+        Vector v = new Vector(data);
 
-        Assert.False(m != m);
+        Assert.False(v != v);
     }
 
     [Fact]
@@ -147,7 +149,7 @@ public class VectorOperatorTests
         data[2] = 4;
         Vector v2 = new Vector(data);
 
-        Assert.False(m1.Equals(m2));
+        Assert.False(v1.Equals(v2));
     }
 
     [Fact]
@@ -169,7 +171,7 @@ public class VectorOperatorTests
         data[2] = 4;
         Vector v2 = new Vector(data);
 
-        Assert.False(m1 == m2);
+        Assert.False(v1 == v2);
     }
 
     [Fact]
@@ -203,7 +205,7 @@ public class VectorOperatorTests
         Vector v1 = new Vector(data);        
         Vector v2 = new Vector(data);
 
-        var data = new double[] { 0, 8, 16 };
+        data = new double[] { 0, 8, 16 };
         Vector result = new Vector(data);
 
         Assert.True((v1 + v2) == result);
@@ -213,7 +215,7 @@ public class VectorOperatorTests
     public void AdditionOperator_AddingTwoVectorsOfDifferingSize_Fail() {
         var data = new double[] { 0, 4, 8 };
         Vector v1 = new Vector(data);        
-        var data = new double[] { 0, 4, 8, 9 };
+        data = new double[] { 0, 4, 8, 9 };
         Vector v2 = new Vector(data);
 
         Assert.Throws<ArgumentException>(() => v1 + v2);
@@ -236,10 +238,10 @@ public class VectorOperatorTests
         var data = new double[] { 0, 4, 8 };
         Vector v1 = new Vector(data);        
 
-        var data = new double[] { 0, 4, 2 };
+        data = new double[] { 0, 4, 2 };
         Vector v2 = new Vector(data);
 
-        var data = new double[] { 0, 0, 6 };
+        data = new double[] { 0, 0, 6 };
 
         Vector result = new Vector(data);
 
@@ -251,7 +253,7 @@ public class VectorOperatorTests
         var data = new double[] { 0, 4, 8 };
         Vector v1 = new Vector(data);        
 
-        var data = new double[] { 0, 4, 2, 8 };
+        data = new double[] { 0, 4, 2, 8 };
         Vector v2 = new Vector(data);
 
         Assert.Throws<ArgumentException>(() => v1 - v2);
@@ -270,38 +272,14 @@ public class VectorOperatorTests
     // *
     
     [Fact]
-    public void DotOperator_MultiplyingTwoVectors_Success() {
+    public void ScaleOperator_ScalingVector_Success() {
         var data = new double[] { 0, 4, 8 };
-        Vector v1 = new Vector(data);        
+        Vector v1 = new Vector(data);         
 
-        var data = new double[] { 0, 2, 2 };
-        Vector v2 = new Vector(data);
+        var result = new Vector(new double[] { 0, 8, 16 });
 
-        double result = 24;
-
-        Assert.True((v1 * v2) == result);
-    }
-
-    [Fact]
-    public void MultiplicationOperator_MultiplyingTwoVectorsOfDifferingSize_Fail() {
-        var data = new double[] { 0, 4, 8 };
-        Vector v1 = new Vector(data);        
-
-        var data = new double[] { 0, 2, 2, 9, 4 };
-        Vector v2 = new Vector(data);
-
-        Assert.Throws<ArgumentException>(() => v1 * v2);
-    }
-
-    [Fact]
-    public void MultiplicationOperator_MultiplyingNull_Fail() {
-        var data = new double[] { 0, 4, 8 };
-        Vector v1 = new Vector(data);        
-
-        Vector v2 = null;
-
-        Assert.Throws<ArgumentNullException>(() => v1 * v2);
-    }
+        Assert.Equal(result, (v1 * 2));
+    } 
     
     // array indexing
     
@@ -320,6 +298,6 @@ public class VectorOperatorTests
 
         v[1] = 9;
 
-        Assert.Equal(9, m[1]);
+        Assert.Equal(9, v[1]);
     }
 }
