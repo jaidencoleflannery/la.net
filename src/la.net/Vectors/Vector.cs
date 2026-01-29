@@ -52,7 +52,30 @@ public sealed class Vector {
         Scale(a, scalar);
 
     public static Vector operator *(Vector a, Matrix m) =>
-        Scale(a, m);
+        Scale(a, m); 
+
+    public static bool operator ==(Vector a, Vector b) {
+        if (a is null || b is null) throw new ArgumentNullException();
+        if(a.Dimension != b.Dimension) return false;
+
+        for(int cursor = 0; cursor < a.Dimension; cursor++) {
+                if(a[cursor] != b[cursor]) return false;
+        }
+        return true;
+    }
+
+    public static bool operator !=(Vector a, Vector b) {
+        if (a is null || b is null) throw new ArgumentNullException();
+        if(a.Dimension != b.Dimension) return false;
+
+        for(int cursor = 0; cursor < a.Dimension; cursor++) {
+                if(a[cursor] != b[cursor]) return true;
+        }
+        return false;
+    }
+
+    public override bool Equals(object? obj) => obj is Vector other && this == other;
+
 
     // methods
 
@@ -85,6 +108,15 @@ public sealed class Vector {
         for(int row = 0; row < this.Dimension; row++)
             v[row] = this[row] / this.Norm;
         return v;
+    }
+
+    public override int GetHashCode() {
+        var hash = new HashCode();
+        hash.Add(this.Norm);
+        hash.Add(this.Dimension);
+        for(int cursor = 0; cursor < this.Dimension; cursor++)
+            hash.Add(_data[cursor]);
+        return hash.ToHashCode();
     }
 
     public override string ToString() {
