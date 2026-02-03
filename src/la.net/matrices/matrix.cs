@@ -175,6 +175,9 @@ public sealed class Matrix
 
     public void SetRow(int row, double[] values, bool conform = false)
     {
+        if(Rows < row){
+            throw new ArgumentOutOfRangeException(nameof(row), $"Target row index out of range.");
+        }
         if(Cols < values.Length) {
             if(conform) throw new ArgumentOutOfRangeException(nameof(row), "Added row must be less than or equal to column length of existing matrix.");
             else throw new ArgumentOutOfRangeException(nameof(row), "Added row must be equal to column length of existing matrix.");

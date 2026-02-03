@@ -40,15 +40,15 @@ public class VectorConstructorTests {
     public void SingleDimensionVectorFromArrayConstructionSuccess() {
         var scalars = new double[] {0};
         var v = new Vector(scalars);
-        Assert.NotNull(vector);
-        Assert.IsType<Vector>(vector);
+        Assert.NotNull(v);
+        Assert.IsType<Vector>(v);
     } 
 
     [Fact]
     public void SingleDimensionZeroVectorFromDimensionConstructionSuccess() {
         var v = new Vector(0);
-        Assert.NotNull(vector);
-        Assert.IsType<Vector>(vector);
+        Assert.NotNull(v);
+        Assert.IsType<Vector>(v);
         Assert.Equal(0, v[0]);
         Assert.Throws<IndexOutOfRangeException>(() => v[1]);
     }
@@ -56,8 +56,8 @@ public class VectorConstructorTests {
     [Fact]
     public void LargeDimensionVectorConstructionSuccess() {
         var v = new Vector(999999);
-        Assert.NotNull(vector);
-        Assert.IsType<Vector>(vector);
+        Assert.NotNull(v);
+        Assert.IsType<Vector>(v);
         Assert.Equal(0, v[0]);
         Assert.Equal(0, v[999999]);
         Assert.Throws<IndexOutOfRangeException>(() => v[1000000]);
