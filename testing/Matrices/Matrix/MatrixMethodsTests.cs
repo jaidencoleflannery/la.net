@@ -25,13 +25,13 @@ public class MatrixMethodsTests
     [Fact]
     public void SetRowAccuratelySetsRow() {
         var data = new double[,] {  
-            {3, 4, 5, 8},
-            {3, 4, 5, 4}
+            {3.0, 4.0, 5.0, 8.0},
+            {3.0, 4.0, 5.0, 4.0}
         };
         var matrix = new Matrix(2, 4, data);
-        var insert = new double[] {0, 4, 9, 2};
+        var insert = new double[] {0.0, 4.0, 9.0, 2.0};
         matrix.SetRow(0, insert);
-        Assert.Equal(data.Cast<double>().ToArray(), matrix.GetRow(0));
+        Assert.Equal(insert.Cast<double>().ToArray(), matrix.GetRow(0));
     }
 
     [Fact]
@@ -56,8 +56,8 @@ public class MatrixMethodsTests
         };
         var matrix = new Matrix(2, 3, data);
         var insert = new double[] {0, 4};
-        matrix.SetRow(0, insert);
-        Assert.Equal(new Double[] {0, 4, 1}, matrix.GetRow(0));
+        matrix.SetRow(0, insert, true);
+        Assert.Equal(new Double[] {0, 4, 0}, matrix.GetRow(0));
     }
 
     [Fact]
@@ -117,7 +117,7 @@ public class MatrixMethodsTests
         var matrix = new Matrix(2, 4, data);
         var insert = new double[] {0, 4, 9, 2};
         matrix.PushRow(insert);
-        Assert.Equal(data.Cast<double>().ToArray(), matrix.GetRow(0));
+        Assert.Equal(insert, matrix.GetRow(0));
     }
 
     [Fact]
@@ -193,7 +193,7 @@ public class MatrixMethodsTests
         var matrix = new Matrix(2, 4, data);
         var insert = new double[] {0, 4, 9, 2};
         matrix.AppendRow(insert);
-        Assert.Equal(data.Cast<double>().ToArray(), matrix.GetRow(matrix.Rows - 1));
+        Assert.Equal(insert, matrix.GetRow(matrix.Rows - 1));
     }
 
     [Fact]
@@ -218,8 +218,8 @@ public class MatrixMethodsTests
         };
         var matrix = new Matrix(2, 3, data);
         var insert = new double[] {0, 4};
-        matrix.SetRow(0, insert);
-        Assert.Equal(new Double[] {0, 4, 1}, matrix.GetRow(matrix.Rows - 1));
+        matrix.AppendRow(insert, true);
+        Assert.Equal(new Double[] {0, 4, 0}, matrix.GetRow(matrix.Rows - 1));
     }
 
     [Fact]
@@ -232,12 +232,11 @@ public class MatrixMethodsTests
             {3, 4, 5, 4, 5, 6, 8, 7},
             {3, 4, 5, 4, 5, 6, 8, 7},
             {3, 4, 5, 4, 5, 6, 8, 7},
-            {3, 4, 5, 4, 5, 6, 8, 7},
         };
-        var matrix = new Matrix(8, 8, data);
+        var matrix = new Matrix(7, 8, data);
         var insert = new double[] {1};
         matrix.AppendRow(insert, true);
-        Assert.Equal(new double[] {1, 0, 0, 0, 0, 0, 0, 1}, matrix.GetRow(7));
+        Assert.Equal(new double[] {1, 0, 0, 0, 0, 0, 0, 1}, matrix.GetRow(8));
     }
 
     [Fact]
@@ -279,8 +278,8 @@ public class MatrixMethodsTests
         };
         Matrix matrix = new Matrix(3, 8, data);
         string str = 
-            "| 3 4 5 4 5 6 8 7 |\n| 3 4 5 4 5 6 8 7 |\n| 3 4 5 4 5 6 8 7 |";
-        Assert.Equal(str, matrix.ToString());
+            "| 3 4 5 4 6 6 8 7 |\n| 3 4 6 4 5 6 8 8 |\n| 3 4 5 4 5 6 8 7 |\n";
+        Assert.Equal(str, matrix.ToStringRounded());
     }
 
 }
