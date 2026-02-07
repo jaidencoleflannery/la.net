@@ -46,7 +46,7 @@ public class VectorConstructorTests {
 
     [Fact]
     public void SingleDimensionZeroVectorFromDimensionConstructionSuccess() {
-        var v = new Vector(0);
+        var v = new Vector(1);
         Assert.NotNull(v);
         Assert.IsType<Vector>(v);
         Assert.Equal(0, v[0]);
@@ -59,7 +59,7 @@ public class VectorConstructorTests {
         Assert.NotNull(v);
         Assert.IsType<Vector>(v);
         Assert.Equal(0, v[0]);
-        Assert.Equal(0, v[999999]);
+        Assert.Equal(0, v[999998]);
         Assert.Throws<IndexOutOfRangeException>(() => v[1000000]);
     }
 

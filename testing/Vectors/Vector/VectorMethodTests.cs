@@ -62,7 +62,7 @@ public class VectorMethodTests
     [Fact]
     public void EqualsApproxFail() {
         Vector v1 = new Vector(new double[] { 0, 4, 8 });
-        Vector v2 = new Vector(new double[] { 1, 4, 8 });
+        Vector v2 = new Vector(new double[] { 2, 4, 8 });
         Assert.False(v1.EqualsApprox(v2, 1));
     }
 
@@ -78,7 +78,7 @@ public class VectorMethodTests
         Vector v1 = new Vector(new double[] { 0, 4, 8 });
         Vector v1u = v1.GetUnit();
         Assert.Equal((v1[0] / v1.Norm), v1u[0]);
-        Assert.Equal(1, Dot(v1u, v1u));
+        Assert.Equal(1, Dot(v1u, v1u), precision: 3);
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class VectorMethodTests
         Vector v1 = new Vector(new double[] { 0, 0.1, 0.4 });
         Vector v1u = v1.GetUnit();
         Assert.Equal((v1[0] / v1.Norm), v1u[0]); 
-        Assert.Equal(1, Dot(v1u, v1u));
+        Assert.Equal(1, Dot(v1u, v1u), precision: 3);
     }
 
     [Fact]

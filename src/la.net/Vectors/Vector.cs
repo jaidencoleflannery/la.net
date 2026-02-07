@@ -87,7 +87,7 @@ public sealed class Vector {
     public bool EqualsApprox(Vector a, double threshold) {
         if(this.Dimension != a.Dimension) throw new ArgumentException($"Cannot approximately compare matrices with differing dimensions.");
         for(int cursor = 0; cursor < this.Dimension; cursor++) {
-            if(this[cursor] - a[cursor] >= threshold) return false;
+            if(Math.Abs(this[cursor] - a[cursor]) >= threshold) return false;
         }
         return true;
     }
