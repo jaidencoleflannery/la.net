@@ -178,9 +178,9 @@ public sealed class Matrix
         if(Rows < row){
             throw new ArgumentOutOfRangeException(nameof(row), $"Target row index out of range.");
         }
-        if(Cols < values.Length) {
-            if(conform) throw new ArgumentOutOfRangeException(nameof(row), "Added row must be less than or equal to column length of existing matrix.");
-            else throw new ArgumentOutOfRangeException(nameof(row), "Added row must be equal to column length of existing matrix.");
+        if(Cols != values.Length) {
+            if(conform && values.Length > Cols) throw new ArgumentOutOfRangeException(nameof(row), "Added row must be less than or equal to column length of existing matrix.");
+            else if(!conform) throw new ArgumentOutOfRangeException(nameof(row), "Added row must be equal to column length of existing matrix.");
         }
         for (int col = 0; col < Cols; col++) {
             if(col < values.Length) _data[row, col] = values[col]; 
@@ -196,9 +196,9 @@ public sealed class Matrix
 
     public void PushRow(double[] values, bool conform = false)
     {
-        if(Cols < values.Length) {
-            if(conform) throw new ArgumentOutOfRangeException(nameof(values), "Added row must be less than or equal to column length of existing matrix.");
-            else throw new ArgumentOutOfRangeException(nameof(values), "Added row must be equal to column length of existing matrix.");
+        if(Cols != values.Length) {
+            if(conform && values.Length > Cols) throw new ArgumentOutOfRangeException(nameof(values), "Added row must be less than or equal to column length of existing matrix.");
+            else if(!conform) throw new ArgumentOutOfRangeException(nameof(values), "Added row must be equal to column length of existing matrix.");
         }
         double[,] matrix = new double[Rows + 1, Cols];
         for (int col = 0; col < values.Length; col++) matrix[0, col] = values[col];
@@ -219,9 +219,9 @@ public sealed class Matrix
 
     public void AppendRow(double[] values, bool conform = false)
     {
-        if(Cols < values.Length) {
-            if(conform) throw new ArgumentOutOfRangeException(nameof(values), "Added row must be less than or equal to row length of existing matrix.");
-            else throw new ArgumentOutOfRangeException(nameof(values), "Added row must be equal to row length of existing matrix.");
+        if(Cols != values.Length) {
+            if(conform && values.Length > Cols) throw new ArgumentOutOfRangeException(nameof(values), "Added row must be less than or equal to row length of existing matrix.");
+            else if(!conform) throw new ArgumentOutOfRangeException(nameof(values), "Added row must be equal to row length of existing matrix.");
         }
         double[,] matrix = new double[Rows + 1, Cols];
         // Copy existing rows
@@ -237,7 +237,7 @@ public sealed class Matrix
         }
         if(conform) {
             // convert n*n index to identity form
-            if(values.Length < Cols) matrix[Rows, values.Length] = 1.0;
+            if(values.Length <= Rows) matrix[Rows, Rows] = 1.0;
         }
         Rows += 1;
         _data = matrix;

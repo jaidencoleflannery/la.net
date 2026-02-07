@@ -2,7 +2,6 @@ namespace Matrices.Tests;
 
 public class MatrixMethodsTests
 {
-
     // GetRow(int row)
 
     [Fact]
@@ -16,8 +15,8 @@ public class MatrixMethodsTests
     public void GetRowThrowsWhenIndexedOutOfBounds() {
         var data = new double[,] {{3, 4, 5, 8}};
         var matrix = new Matrix(1, 4, data);
-        Assert.Throws<IndexOutOfRangeException>(() => matrix.GetRow(1));
-        Assert.Throws<IndexOutOfRangeException>(() => matrix.GetRow(-1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => matrix.GetRow(1));
+        Assert.Throws<ArgumentOutOfRangeException>(() => matrix.GetRow(-1));
     }
 
     // SetRow(int row, double[] values, bool conform = false)
@@ -219,7 +218,7 @@ public class MatrixMethodsTests
         var matrix = new Matrix(2, 3, data);
         var insert = new double[] {0, 4};
         matrix.AppendRow(insert, true);
-        Assert.Equal(new Double[] {0, 4, 0}, matrix.GetRow(matrix.Rows - 1));
+        Assert.Equal(new Double[] {0, 4, 1}, matrix.GetRow(matrix.Rows - 1));
     }
 
     [Fact]
@@ -236,7 +235,7 @@ public class MatrixMethodsTests
         var matrix = new Matrix(7, 8, data);
         var insert = new double[] {1};
         matrix.AppendRow(insert, true);
-        Assert.Equal(new double[] {1, 0, 0, 0, 0, 0, 0, 1}, matrix.GetRow(8));
+        Assert.Equal(new double[] {1, 0, 0, 0, 0, 0, 0, 1}, matrix.GetRow(7));
     }
 
     [Fact]
@@ -265,7 +264,7 @@ public class MatrixMethodsTests
         };
         Matrix matrix = new Matrix(3, 8, data);
         string str = 
-            "| 3 4 5 4 5 6 8 7 |\n| 3 4 5 4 5 6 8 7 |\n| 3 4 5 4 5 6 8 7 |";
+            "| 3.000 4.000 5.000 4.000 5.000 6.000 8.000 7.000 |\n| 3.000 4.000 5.000 4.000 5.000 6.000 8.000 7.000 |\n| 3.000 4.000 5.000 4.000 5.000 6.000 8.000 7.000 |\n";
         Assert.Equal(str, matrix.ToString());
     }
 
