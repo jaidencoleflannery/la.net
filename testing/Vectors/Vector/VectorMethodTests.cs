@@ -103,5 +103,23 @@ public class VectorMethodTests
         Assert.NotEqual(v1.GetHashCode(), v2.GetHashCode());
     }
 
+    [Fact]
+    public void ToStringAccurate() {
+        Vector v1 = new Vector(new double[] { 0, 0.1, 0.4 });
+        string v1s = "| 0.000 |\n| 0.100 |\n| 0.400 |\n"; 
+        Vector v2 = new Vector(new double[] { 0, 9, 0.4 });
+        string v2s = "| 0.000 |\n| 9.000 |\n| 0.400 |\n";
+        Assert.Equal(v1s, v1.ToString());
+        Assert.Equal(v2s, v2.ToString());
+    }
+
+    [Fact]
+    public void ToStringRoundedAccurate() {
+        Vector v1 = new Vector(new double[] { 0, 0.1, 0.4 });
+        string v1s = "| 0 |\n| 0 |\n| 0 |\n"; 
+        Vector v2 = new Vector(new double[] { 0, 9, 0.4 });
+        string v2s = "| 0 |\n| 9 |\n| 0 |\n";
+        Assert.Equal(v1s, v1.ToStringRounded());
+        Assert.Equal(v2s, v2.ToStringRounded());    }
 }
 
