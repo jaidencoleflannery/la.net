@@ -2,7 +2,9 @@
 A library for accurate Linear Algebra calculations.
 
 ## Overview
-A simple Linear Algebra library for accurate Vector and Matrix calculations.  This library focuses on accuracy in minimal time complexity.
+A simple Linear Algebra library for accurate Vector and Matrix calculations.
+
+This library focuses on accuracy in minimal time complexity.
 
 ## Features
 * Vectors
@@ -35,4 +37,6 @@ class Program{
 ```
 
 ## Contributing
-To contribute, ensure your request passes all unit tests before opening a PR.  Run tests: ```cd ./testing/dotnet test```
+To contribute, ensure your request passes all unit tests before opening a PR.
+
+Run tests: ```cd ./testing/dotnet test```
