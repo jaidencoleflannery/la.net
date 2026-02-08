@@ -14,7 +14,8 @@ Run: ```dotnet add package jaidencoleflannery.la.net```
 
 ## Quick Start
 Barebones example of usage:
-```using Matrices;
+```
+using Matrices;
 using Vectors;
 
 class Program{
@@ -31,7 +32,8 @@ class Program{
         Matrix matrix = new Matrix(3, 3, m);
         Console.WriteLine(matrix.ToString());
     }
-}```
+}
+```
 
 ## Contributing
 To contribute, ensure your request passes all unit tests before opening a PR.
