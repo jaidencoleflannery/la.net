@@ -3,7 +3,7 @@ A library for accurate Linear Algebra calculations.
 
 ## Overview
 A simple Linear Algebra library for accurate Vector and Matrix calculations.
-This library is not memory efficient, instead it attempts to be extremely accurate in minimal time complexity.
+This library focuses on accuracy in minimal time complexity.
 
 ## Features
 * Vectors
