@@ -1,7 +1,4 @@
 # la.net
-A library for accurate Linear Algebra calculations.
-
-## Overview
 A simple Linear Algebra library for accurate Vector and Matrix calculations.
 
 This library focuses on accuracy in minimal time complexity.
