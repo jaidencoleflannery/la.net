@@ -1,17 +1,17 @@
 # la.net
-A simple Linear Algebra library for accurate Vector and Matrix calculations.
+a simple linear algebra library for accurate vector and matrix calculations.
 
-This library focuses on accuracy in minimal time complexity.
+this library focuses on accuracy in minimal time complexity.
 
-## Features
-* Vectors
-* Matrices
+## features
+* vectors
+* matrices
 
-## Installation
-Run: ```dotnet add package jaidencoleflannery.la.net```
+## installation
+run: ```dotnet add package jaidencoleflannery.la.net```
 
-## Quick Start
-Barebones example of usage:
+## quick start
+barebones example of usage:
 ```
 using Matrices;
 using Vectors;
@@ -33,7 +33,8 @@ class Program{
 }
 ```
 
-## Contributing
-To contribute, ensure your request passes all unit tests before opening a PR.
+## contributing
+to contribute, ensure your request passes all unit tests before opening a pr.
+if you feel as though any of the tests are innacurate or need adjustment, please submit a seperate pr for unit test changes.
 
-Run tests: ```cd ./testing/dotnet test```
+run tests: ```cd ./testing/dotnet test```
